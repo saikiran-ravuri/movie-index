@@ -19,7 +19,7 @@ function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-[#e8ddca] bg-[#f8f4ec]/95 backdrop-blur-md">
       <Container>
-        {/* ================= Desktop ================= */}
+        {/* Desktop */}
 
         <div className="hidden xl:grid grid-cols-[360px_1fr_320px] items-center py-5">
           {/* Logo */}
@@ -90,7 +90,7 @@ function Navbar() {
           </div>
         </div>
 
-        {/* ================= Tablet + Mobile ================= */}
+         {/* Tablet + Mobile  */}
 
         <div className="xl:hidden">
           <div className="flex items-center justify-between py-5">
