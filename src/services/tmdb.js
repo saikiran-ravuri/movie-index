@@ -37,3 +37,18 @@ export async function getMovieDetails(movieId) {
 
   return response.json();
 }
+
+export async function getMovieCredits(movieId) {
+  const response = await fetch(
+    `${TMDB_BASE_URL}/movie/${movieId}/credits`,
+    requestOptions,
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch movie credits: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  return Array.isArray(data.cast) ? data.cast : [];
+}

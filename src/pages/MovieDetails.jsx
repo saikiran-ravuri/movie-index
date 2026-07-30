@@ -1,34 +1,43 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+
 import MovieHero from "../components/movie-details/MovieHero";
 import MovieInfo from "../components/movie-details/MovieInfo";
 import ProductionCompanies from "../components/movie-details/ProductionCompanies";
-import { getMovieDetails } from "../services/tmdb";
+import CastSection from "../components/movie-details/CastSection";
+
+import { getMovieDetails, getMovieCredits } from "../services/tmdb";
 
 function MovieDetails() {
   const { id } = useParams();
 
   const [movie, setMovie] = useState(null);
+  const [cast, setCast] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function loadMovieDetails() {
+    async function loadMovieData() {
       try {
         setLoading(true);
         setError("");
 
-        const movieData = await getMovieDetails(id);
+        const [movieData, castData] = await Promise.all([
+          getMovieDetails(id),
+          getMovieCredits(id),
+        ]);
+
         setMovie(movieData);
+        setCast(castData.slice(0, 12));
       } catch (err) {
-        setError("Unable to load movie details.");
         console.error(err);
+        setError("Unable to load movie details.");
       } finally {
         setLoading(false);
       }
     }
 
-    loadMovieDetails();
+    loadMovieData();
   }, [id]);
 
   if (loading) {
@@ -56,6 +65,8 @@ function MovieDetails() {
       <MovieHero movie={movie} />
       <MovieInfo movie={movie} />
       <ProductionCompanies movie={movie} />
+
+      <CastSection cast={cast} />
     </main>
   );
 }
