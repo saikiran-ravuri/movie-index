@@ -1,43 +1,70 @@
 import Container from "../common/Container";
 
-function MovieBanner() {
+const BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/original";
+
+function MovieBanner({ movie }) {
+  if (!movie) {
+    return null;
+  }
+
+  const backdropUrl = movie.backdrop_path
+    ? `${BACKDROP_BASE_URL}${movie.backdrop_path}`
+    : null;
+
+  const releaseYear = movie.release_date?.slice(0, 4) || "N/A";
+  const rating = Number(movie.vote_average || 0).toFixed(1);
+
   return (
     <section className="pb-24">
       <Container>
-        <div className="overflow-hidden rounded-3xl border border-[#e8ddca] bg-white shadow-sm">
-          <div className="space-y-6 p-8 sm:p-10 lg:p-14">
-            <p className="text-sm font-semibold uppercase tracking-[0.30em] text-[#b8862d]">
-              Featured Movie
-            </p>
+        <article className="relative min-h-[500px] overflow-hidden rounded-3xl border border-[#e8ddca] bg-[#1f2329] shadow-sm">
+          {backdropUrl && (
+            <img
+              src={backdropUrl}
+              alt={`${movie.title} backdrop`}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          )}
 
-            <h2 className="font-['Cormorant_Garamond'] text-4xl font-bold text-[#1f2329] sm:text-5xl lg:text-6xl">
-              Interstellar
-            </h2>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#17191d]/95 via-[#17191d]/75 to-[#17191d]/20" />
 
-            <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-gray-600">
-              <span>2014</span>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#17191d]/75 via-transparent to-transparent" />
 
-              <span>⭐ 8.7</span>
+          <div className="relative z-10 flex min-h-[500px] items-end p-8 sm:p-10 lg:p-14">
+            <div className="max-w-3xl">
+              <p className="mb-5 text-sm font-semibold uppercase tracking-[0.3em] text-[#d5a64e]">
+                Featured Movie
+              </p>
 
-              <span>Science Fiction • Adventure • Drama</span>
-            </div>
+              <h2 className="font-['Cormorant_Garamond'] text-4xl font-bold leading-none text-white sm:text-5xl lg:text-6xl">
+                {movie.title}
+              </h2>
 
-            <p className="max-w-3xl text-lg leading-8 text-gray-600">
-              A team of explorers travels through a wormhole in space in an
-              attempt to ensure humanity's survival.
-            </p>
+              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-white/80">
+                <span>{releaseYear}</span>
 
-            <div className="flex flex-col gap-4 pt-2 sm:flex-row">
-              <button className="rounded-full bg-[#b8862d] px-8 py-3 font-semibold text-white transition duration-300 hover:bg-[#9f7225]">
-                View Details
-              </button>
+                <span className="h-1 w-1 rounded-full bg-[#d5a64e]" />
 
-              <button className="rounded-full border border-[#d8ccb7] bg-white px-8 py-3 font-semibold text-[#1f2329] transition duration-300 hover:border-[#b8862d] hover:text-[#b8862d]">
-                Watch Trailer
-              </button>
+                <span className="flex items-center gap-2">
+                  <span className="text-[#d5a64e]">★</span>
+                  {rating}
+                </span>
+
+                <span className="h-1 w-1 rounded-full bg-[#d5a64e]" />
+
+                <span>TMDB Featured</span>
+              </div>
+
+              <p className="mt-6 max-w-2xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8">
+                {movie.overview
+                  ? movie.overview.length > 180
+                    ? `${movie.overview.substring(0, 180)}...`
+                    : movie.overview
+                  : "Movie description is currently unavailable."}
+              </p>
             </div>
           </div>
-        </div>
+        </article>
       </Container>
     </section>
   );

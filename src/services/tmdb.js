@@ -1,19 +1,23 @@
-const BASE_URL = "https://api.themoviedb.org/3";
+const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
-const ACCESS_TOKEN = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
+const TMDB_TOKEN = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 
-const headers = {
-  Authorization: `Bearer ${ACCESS_TOKEN}`,
-  Accept: "application/json",
-};
-
-export async function fetchFromTMDB(endpoint) {
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    headers,
+export async function getPopularMovies() {
+  const response = await fetch(`${TMDB_BASE_URL}/movie/popular`, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${TMDB_TOKEN}`,
+    },
   });
-  return response.json();
-}
 
-export function getPopularMovies() {
-  return fetchFromTMDB("/movie/popular");
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch popular movies: ${response.status}`,
+    );
+  }
+
+  const data = await response.json();
+
+  return Array.isArray(data.results) ? data.results : [];
 }
