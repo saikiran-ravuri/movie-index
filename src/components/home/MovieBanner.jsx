@@ -1,28 +1,35 @@
-import Container from "../common/Container";
+import { useNavigate } from "react-router-dom";
 
-const BACKDROP_BASE_URL = "https://image.tmdb.org/t/p/original";
+import Container from "../common/Container";
+import { getBackdropUrl } from "../../utils/image";
 
 function MovieBanner({ movie }) {
+  const navigate = useNavigate();
+
   if (!movie) {
     return null;
   }
 
-  const backdropUrl = movie.backdrop_path
-    ? `${BACKDROP_BASE_URL}${movie.backdrop_path}`
-    : null;
-
+  const backdropUrl = getBackdropUrl(movie.backdrop_path);
   const releaseYear = movie.release_date?.slice(0, 4) || "N/A";
   const rating = Number(movie.vote_average || 0).toFixed(1);
+
+  function handleBannerClick() {
+    navigate(`/movie/${movie.id}`);
+  }
 
   return (
     <section className="pb-24">
       <Container>
-        <article className="relative min-h-[500px] overflow-hidden rounded-3xl border border-[#e8ddca] bg-[#1f2329] shadow-sm">
+        <article
+          onClick={handleBannerClick}
+          className="group relative min-h-[500px] cursor-pointer overflow-hidden rounded-3xl border border-[#e8ddca] bg-[#1f2329] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(67,52,35,0.18)]"
+        >
           {backdropUrl && (
             <img
               src={backdropUrl}
               alt={`${movie.title} backdrop`}
-              className="absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
             />
           )}
 
