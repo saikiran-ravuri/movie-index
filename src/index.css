@@ -2,3 +2,13 @@
 
 @import "tailwindcss";
 @import "./styles/global.css";
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #f7f2e9;
+}
+
+html {
+  scroll-behavior: smooth;
+}

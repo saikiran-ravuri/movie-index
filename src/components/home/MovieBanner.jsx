@@ -14,45 +14,48 @@ function MovieBanner({ movie }) {
   const releaseYear = movie.release_date?.slice(0, 4) || "N/A";
   const rating = Number(movie.vote_average || 0).toFixed(1);
 
-  function handleBannerClick() {
+  function handleViewDetails() {
     navigate(`/movie/${movie.id}`);
   }
 
+  const overview = movie.overview
+    ? movie.overview.length > 180
+      ? `${movie.overview.substring(0, 180)}...`
+      : movie.overview
+    : "Movie description is currently unavailable.";
+
   return (
-    <section className="pb-24">
+    <section className="pb-14 lg:pb-16">
       <Container>
-        <article
-          onClick={handleBannerClick}
-          className="group relative min-h-[500px] cursor-pointer overflow-hidden rounded-3xl border border-[#e8ddca] bg-[#1f2329] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(67,52,35,0.18)]"
-        >
+        <article className="group relative overflow-hidden rounded-[30px] border border-[#e8ddca] bg-[#1f2329] shadow-[0_14px_35px_rgba(60,45,28,0.10)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_22px_55px_rgba(60,45,28,0.18)]">
           {backdropUrl && (
             <img
               src={backdropUrl}
               alt={`${movie.title} backdrop`}
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
             />
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-r from-[#17191d]/95 via-[#17191d]/75 to-[#17191d]/20" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#17191d] via-[#17191d]/82 to-[#17191d]/20" />
 
-          <div className="absolute inset-0 bg-gradient-to-t from-[#17191d]/75 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
 
-          <div className="relative z-10 flex min-h-[500px] items-end p-8 sm:p-10 lg:p-14">
-            <div className="max-w-3xl">
-              <p className="mb-5 text-sm font-semibold uppercase tracking-[0.3em] text-[#d5a64e]">
+          <div className="relative z-10 flex min-h-[420px] items-end px-8 py-10 sm:px-10 lg:min-h-[450px] lg:px-14 lg:py-14">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center rounded-full border border-[#d5a64e]/40 bg-[#d5a64e]/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#d5a64e] backdrop-blur-sm">
                 Featured Movie
-              </p>
+              </span>
 
-              <h2 className="font-['Cormorant_Garamond'] text-4xl font-bold leading-none text-white sm:text-5xl lg:text-6xl">
+              <h2 className="mt-5 font-['Cormorant_Garamond'] text-4xl font-bold leading-[0.95] text-white sm:text-5xl lg:text-6xl">
                 {movie.title}
               </h2>
 
-              <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-white/80">
+              <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium text-white/80">
                 <span>{releaseYear}</span>
 
                 <span className="h-1 w-1 rounded-full bg-[#d5a64e]" />
 
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-1.5">
                   <span className="text-[#d5a64e]">★</span>
                   {rating}
                 </span>
@@ -62,13 +65,19 @@ function MovieBanner({ movie }) {
                 <span>TMDB Featured</span>
               </div>
 
-              <p className="mt-6 max-w-2xl text-base leading-7 text-white/75 sm:text-lg sm:leading-8">
-                {movie.overview
-                  ? movie.overview.length > 180
-                    ? `${movie.overview.substring(0, 180)}...`
-                    : movie.overview
-                  : "Movie description is currently unavailable."}
+              <p className="mt-6 max-w-xl text-[15px] leading-7 text-white/75 lg:text-base">
+                {overview}
               </p>
+
+              <div className="mt-10">
+                <button
+                  type="button"
+                  onClick={handleViewDetails}
+                  className="rounded-full bg-[#d5a64e] px-6 py-3 text-sm font-semibold text-[#1f2329] transition duration-300 hover:scale-[1.03] hover:bg-[#e3b45d] focus:outline-none focus:ring-4 focus:ring-[#d5a64e]/30"
+                >
+                  View Details
+                </button>
+              </div>
             </div>
           </div>
         </article>

@@ -1,37 +1,42 @@
+import Container from "../common/Container";
 import MovieCard from "./MovieCard";
 
 function MovieList({ movies = [] }) {
   const movieList = Array.isArray(movies) ? movies : [];
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-5 py-12 sm:px-8 lg:px-10">
-      <div className="mb-6 flex items-end justify-between gap-4">
-        <div>
-          <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-[0.32em] text-[#b8862d]">
-            Discover
-          </p>
+    <section id="popular-movies" className="pb-24">
+      <Container>
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-5">
+          <div>
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.30em] text-[#b8862d]">
+              Discover
+            </p>
 
-          <h2 className="font-['Cormorant_Garamond'] text-3xl font-bold leading-tight text-[#1f2329] sm:text-4xl">
-            Popular Movies
-          </h2>
+            <h2 className="font-['Cormorant_Garamond'] text-4xl font-bold leading-none text-[#1f2329]">
+              Popular Movies
+            </h2>
+          </div>
+
+          <span className="rounded-full border border-[#e7ded0] bg-white px-4 py-2 text-sm font-medium text-[#5f6368] shadow-sm">
+            {movieList.length} Movies
+          </span>
         </div>
 
-        <span className="shrink-0 rounded-full border border-[#e7ded0] bg-white px-3.5 py-1.5 text-xs font-medium text-[#5f6368] shadow-sm">
-          {movieList.length} Movies
-        </span>
-      </div>
-
-      {movieList.length > 0 ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5">
-          {movieList.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
-        </div>
-      ) : (
-        <p className="py-12 text-center text-sm font-medium text-stone-500">
-          No movies available.
-        </p>
-      )}
+        {movieList.length > 0 ? (
+          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {movieList.map((movie) => (
+              <MovieCard key={movie.id} movie={movie} />
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-[#e7ded0] bg-white py-20 text-center shadow-sm">
+            <p className="text-sm font-medium text-stone-500">
+              No movies available.
+            </p>
+          </div>
+        )}
+      </Container>
     </section>
   );
 }

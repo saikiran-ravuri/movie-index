@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+
 import Hero from "../components/home/Hero";
 import MovieBanner from "../components/home/MovieBanner";
 import MovieList from "../components/movies/MovieList";
@@ -22,7 +23,6 @@ function Home() {
 
         if (popularMovies.length > 0) {
           const randomIndex = Math.floor(Math.random() * popularMovies.length);
-
           setFeaturedMovie(popularMovies[randomIndex]);
         }
       } catch (error) {
@@ -40,7 +40,7 @@ function Home() {
   }, []);
 
   return (
-    <>
+    <main className="min-h-screen bg-[#F7F2E9]">
       <Hero />
 
       {featuredMovie && <MovieBanner movie={featuredMovie} />}
@@ -58,7 +58,7 @@ function Home() {
       )}
 
       {!loading && !error && <MovieList movies={movies} />}
-    </>
+    </main>
   );
 }
 
