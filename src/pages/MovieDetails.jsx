@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import Container from "../components/common/Container";
+import MovieHero from "../components/movie-details/MovieHero";
+import MovieInfo from "../components/movie-details/MovieInfo";
 import { getMovieDetails } from "../services/tmdb";
 
 function MovieDetails() {
@@ -15,10 +17,10 @@ function MovieDetails() {
     async function fetchMovieDetails() {
       try {
         setLoading(true);
+        setError("");
 
         const movieData = await getMovieDetails(id);
 
-        console.log(movieData);
         setMovie(movieData);
       } catch (err) {
         setError(err.message);
@@ -32,9 +34,9 @@ function MovieDetails() {
 
   if (loading) {
     return (
-      <main className="py-16">
+      <main className="min-h-screen bg-[#F7F2E9] py-16">
         <Container>
-          <p>Loading movie...</p>
+          <p className="text-stone-600">Loading movie details...</p>
         </Container>
       </main>
     );
@@ -42,19 +44,22 @@ function MovieDetails() {
 
   if (error) {
     return (
-      <main className="py-16">
+      <main className="min-h-screen bg-[#F7F2E9] py-16">
         <Container>
-          <p>{error}</p>
+          <p className="font-medium text-red-700">{error}</p>
         </Container>
       </main>
     );
   }
 
+  if (!movie) {
+    return null;
+  }
+
   return (
-    <main className="py-14">
-      <Container>
-        <h1 className="text-4xl font-bold">{movie.title}</h1>
-      </Container>
+    <main>
+      <MovieHero movie={movie} />
+      <MovieInfo movie={movie} />
     </main>
   );
 }
