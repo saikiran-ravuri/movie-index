@@ -18,9 +18,7 @@ function MovieInfo({ movie }) {
     : "Unavailable";
 
   function formatCurrency(amount) {
-    if (!amount) {
-      return "Unavailable";
-    }
+    if (!amount) return "Unavailable";
 
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -70,19 +68,19 @@ function MovieInfo({ movie }) {
   ];
 
   return (
-    <section className="bg-[#F7F2E9] pb-24 pt-14 sm:pt-16 lg:pb-28 lg:pt-20">
+    <section>
       <Container>
-        <div className="mb-10 sm:mb-12">
-          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#9B6417] sm:text-sm">
+        <div className="mb-9 sm:mb-11">
+          <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[#9B6417] sm:text-sm">
             At a Glance
           </p>
 
-          <h2 className="mt-3 font-['Cormorant_Garamond'] text-4xl font-bold leading-tight text-stone-900 sm:text-5xl">
+          <h2 className="mt-3 font-['Cormorant_Garamond'] text-4xl font-bold text-stone-900 sm:text-5xl">
             Movie Information
           </h2>
 
-          <p className="mt-4 max-w-2xl text-base leading-7 text-stone-600">
-            Key production, release and financial information about the movie.
+          <p className="mt-3 max-w-2xl text-base leading-7 text-stone-600">
+            Key production, release, and financial details about the movie.
           </p>
         </div>
 
