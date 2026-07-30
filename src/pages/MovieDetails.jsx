@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-import Container from "../components/common/Container";
 import MovieHero from "../components/movie-details/MovieHero";
 import MovieInfo from "../components/movie-details/MovieInfo";
+import ProductionCompanies from "../components/movie-details/ProductionCompanies";
 import { getMovieDetails } from "../services/tmdb";
 
 function MovieDetails() {
@@ -14,52 +13,49 @@ function MovieDetails() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function fetchMovieDetails() {
+    async function loadMovieDetails() {
       try {
         setLoading(true);
         setError("");
 
         const movieData = await getMovieDetails(id);
-
         setMovie(movieData);
       } catch (err) {
-        setError(err.message);
+        setError("Unable to load movie details.");
+        console.error(err);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchMovieDetails();
+    loadMovieDetails();
   }, [id]);
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#F7F2E9] py-16">
-        <Container>
-          <p className="text-stone-600">Loading movie details...</p>
-        </Container>
+      <main className="flex min-h-screen items-center justify-center bg-[#F7F2E9]">
+        <p className="text-lg font-medium text-stone-700">
+          Loading movie details...
+        </p>
       </main>
     );
   }
 
-  if (error) {
+  if (error || !movie) {
     return (
-      <main className="min-h-screen bg-[#F7F2E9] py-16">
-        <Container>
-          <p className="font-medium text-red-700">{error}</p>
-        </Container>
+      <main className="flex min-h-screen items-center justify-center bg-[#F7F2E9] px-6">
+        <p className="text-center text-lg font-medium text-red-700">
+          {error || "Movie not found."}
+        </p>
       </main>
     );
-  }
-
-  if (!movie) {
-    return null;
   }
 
   return (
     <main>
       <MovieHero movie={movie} />
       <MovieInfo movie={movie} />
+      <ProductionCompanies movie={movie} />
     </main>
   );
 }
