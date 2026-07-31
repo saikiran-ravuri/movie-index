@@ -1,60 +1,102 @@
-import { Heart } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import Container from "../common/Container";
+import logo from "../../assets/logos/movie-index-logo.png";
+
+const footerLinks = [
+  { label: "Home", to: "/" },
+  { label: "Watchlist", to: "/watchlist" },
+  { label: "About", to: "/about" },
+];
 
 function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="mt-20 border-t border-[#e8ddca] bg-[#f8f4ec]">
+    <footer className="mt-12 border-t border-[#E8DDCA] bg-[#F8F4EC]">
       <Container>
-        <div className="py-16">
-          <div className="flex flex-col items-center text-center">
-            <h2 className="font-['Cormorant_Garamond'] text-5xl font-bold text-[#1f2329]">
-              Movie Index
-            </h2>
-
-            <p className="mt-3 text-sm font-semibold uppercase tracking-[0.30em] text-[#b8862d]">
-              Every Frame Has A Story
-            </p>
-
-            <p className="mt-6 max-w-2xl text-base leading-8 text-[#6b7280]">
-              Discover movies, explore detailed information, and build your
-              personal watchlist through a clean, elegant, and modern cinema
-              experience powered by TMDB.
-            </p>
-
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-sm font-medium text-[#6b7280]">
-              <a
-                href="https://www.themoviedb.org/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition duration-300 hover:text-[#b8862d]"
+        <div className="py-10">
+          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+            <div className="max-w-xl">
+              <Link
+                to="/"
+                aria-label="Go to Movie Index homepage"
+                className="inline-flex items-center gap-3"
               >
-                Powered by TMDB
-              </a>
+                <img
+                  src={logo}
+                  alt="Movie Index logo"
+                  className="h-11 w-11 shrink-0 object-contain sm:h-12 sm:w-12"
+                />
 
-              <span className="h-1 w-1 rounded-full bg-[#d5a64e]" />
+                <div>
+                  <h2 className="font-['Cormorant_Garamond'] text-[32px] font-bold leading-none text-[#1F2329] sm:text-[34px]">
+                    Movie Index
+                  </h2>
+
+                  <p className="mt-1 text-[9px] font-semibold uppercase tracking-[0.24em] text-[#B8862D]">
+                    Every Frame Has A Story
+                  </p>
+                </div>
+              </Link>
+
+              <p className="mt-4 max-w-lg text-sm leading-7 text-stone-600 sm:text-base">
+                Discover movies, explore detailed information, and build a
+                personal watchlist through a clean and thoughtfully crafted
+                experience.
+              </p>
+            </div>
+
+            <div className="lg:text-right">
+              <p className="mb-4 mt-1 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#9B6417]">
+                Navigation
+              </p>
+
+              <nav aria-label="Footer navigation">
+                <ul className="flex flex-wrap items-center gap-x-6 gap-y-3 lg:justify-end">
+                  {footerLinks.map((link) => (
+                    <li key={link.to}>
+                      <Link
+                        to={link.to}
+                        className="text-sm font-medium text-stone-600 transition-colors duration-300 hover:text-[#9B6417]"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+
+                  <li>
+                    <a
+                      href="https://github.com/saikiran-ravuri"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-600 transition-colors duration-300 hover:text-[#9B6417]"
+                    >
+                      GitHub Profile
+                      <ArrowUpRight size={14} />
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+
+          <div className="mt-8 flex flex-col gap-4 border-t border-[#EEE4D6] pt-4 text-xs text-stone-500 sm:flex-row sm:items-center sm:justify-between">
+            <p>© {currentYear} Movie Index. All rights reserved.</p>
+
+            <div className="sm:text-right">
+              <p>Designed &amp; Developed by</p>
 
               <a
                 href="https://github.com/saikiran-ravuri"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="transition duration-300 hover:text-[#b8862d]"
+                className="mt-1 inline-block font-semibold text-[#9B6417] transition-colors duration-300 hover:text-[#B8862D]"
               >
-                GitHub Profile
+                Ravuri Sai Kiran
               </a>
             </div>
-
-            <div className="mt-10 h-px w-full max-w-md bg-[#e4d7c2]" />
-
-            <p className="mt-8 flex items-center gap-2 text-sm text-[#7b7b7b]">
-              Made with
-              <Heart size={15} fill="currentColor" className="text-[#b8862d]" />
-              using React & TMDB API
-            </p>
-
-            <p className="mt-4 text-sm text-[#9a9a9a]">
-              © {new Date().getFullYear()} Movie Index. All rights reserved.
-            </p>
           </div>
         </div>
       </Container>
