@@ -4,6 +4,9 @@ import { Menu, Search, X } from "lucide-react";
 
 import Container from "../common/Container";
 import SearchBar from "../navbar/SearchBar";
+import SearchDropdown from "../navbar/SearchDropdown";
+import useDebounce from "../../hooks/useDebounce";
+import { searchMovies } from "../../services/tmdb";
 import logo from "../../assets/logos/movie-index-logo.png";
 
 const menuLinks = [
@@ -16,12 +19,34 @@ function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState("");
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
+
   const menuRef = useRef(null);
+  const desktopSearchRef = useRef(null);
+  const mobileSearchRef = useRef(null);
 
   useEffect(() => {
     function handleOutsideClick(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);
+      }
+
+      const clickedInsideDesktopSearch =
+        desktopSearchRef.current &&
+        desktopSearchRef.current.contains(event.target);
+
+      const clickedInsideMobileSearch =
+        mobileSearchRef.current &&
+        mobileSearchRef.current.contains(event.target);
+
+      if (!clickedInsideDesktopSearch && !clickedInsideMobileSearch) {
+        setSearchQuery("");
+        setIsMobileSearchOpen(false);
       }
     }
 
@@ -29,6 +54,7 @@ function Navbar() {
       if (event.key === "Escape") {
         setIsMenuOpen(false);
         setIsMobileSearchOpen(false);
+        setSearchQuery("");
       }
     }
 
@@ -41,18 +67,75 @@ function Navbar() {
     };
   }, []);
 
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function fetchSearchResults() {
+      const query = debouncedSearchQuery.trim();
+
+      if (!query) {
+        setSearchResults([]);
+        setSearchError("");
+        setIsSearching(false);
+        return;
+      }
+
+      try {
+        setIsSearching(true);
+        setSearchError("");
+
+        const results = await searchMovies(query);
+
+        if (!isCancelled) {
+          setSearchResults(results);
+        }
+      } catch (error) {
+        console.error("Movie search failed:", error);
+
+        if (!isCancelled) {
+          setSearchError("Unable to search movies.");
+          setSearchResults([]);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsSearching(false);
+        }
+      }
+    }
+
+    fetchSearchResults();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [debouncedSearchQuery]);
+
   function closeMenu() {
     setIsMenuOpen(false);
+  }
+
+  function closeSearch() {
+    setSearchQuery("");
+    setSearchResults([]);
+    setSearchError("");
+    setIsSearching(false);
+    setIsMobileSearchOpen(false);
+  }
+
+  function handleSearchChange(event) {
+    setSearchQuery(event.target.value);
   }
 
   return (
     <header className="sticky top-0 z-50 border-b border-[#e8ddca] bg-[#f8f4ec]/95 shadow-[0_8px_24px_rgba(72,52,29,0.07)] backdrop-blur-xl">
       <Container>
         <div className="relative flex min-h-[82px] items-center justify-between">
-          {/* Brand */}
           <Link
             to="/"
-            onClick={closeMenu}
+            onClick={() => {
+              closeMenu();
+              closeSearch();
+            }}
             aria-label="Go to Movie Index homepage"
             className="relative z-10 flex shrink-0 items-center gap-3"
           >
@@ -73,19 +156,31 @@ function Navbar() {
             </div>
           </Link>
 
-          {/* Precisely centred tablet and desktop search */}
-          <div className="absolute left-1/2 hidden w-[52%] -translate-x-1/2 md:block lg:w-[56%] xl:w-[52%] 2xl:max-w-[780px]">
-            <SearchBar />
+          <div
+            ref={desktopSearchRef}
+            className="absolute left-1/2 hidden w-[52%] -translate-x-1/2 md:block lg:w-[56%] xl:w-[52%] 2xl:max-w-[780px]"
+          >
+            <SearchBar value={searchQuery} onChange={handleSearchChange} />
+
+            <SearchDropdown
+              isOpen={searchQuery.trim().length > 0}
+              isSearching={isSearching}
+              searchError={searchError}
+              searchResults={searchResults}
+              onClose={closeSearch}
+            />
           </div>
 
-          {/* Right-side actions */}
           <div className="relative z-10 ml-auto flex shrink-0 items-center gap-3">
-            {/* Phone search button */}
             <button
               type="button"
               onClick={() => {
                 setIsMobileSearchOpen((current) => !current);
                 setIsMenuOpen(false);
+
+                if (isMobileSearchOpen) {
+                  closeSearch();
+                }
               }}
               aria-label={
                 isMobileSearchOpen ? "Close movie search" : "Open movie search"
@@ -96,13 +191,13 @@ function Navbar() {
               {isMobileSearchOpen ? <X size={20} /> : <Search size={20} />}
             </button>
 
-            {/* Navigation menu */}
             <div ref={menuRef} className="relative">
               <button
                 type="button"
                 onClick={() => {
                   setIsMenuOpen((current) => !current);
                   setIsMobileSearchOpen(false);
+                  setSearchQuery("");
                 }}
                 aria-label={
                   isMenuOpen ? "Close navigation menu" : "Open navigation menu"
@@ -128,7 +223,10 @@ function Navbar() {
                           <NavLink
                             to={item.path}
                             end={item.path === "/"}
-                            onClick={closeMenu}
+                            onClick={() => {
+                              closeMenu();
+                              closeSearch();
+                            }}
                             className={({ isActive }) =>
                               `block rounded-xl px-4 py-3 text-sm font-semibold transition-colors duration-300 ${
                                 isActive
@@ -149,12 +247,33 @@ function Navbar() {
           </div>
         </div>
 
-        {/* Phone search field */}
         {isMobileSearchOpen && (
-          <div className="border-t border-[#e8ddca] pb-4 pt-4 md:hidden">
-            <SearchBar />
+          <div
+            ref={mobileSearchRef}
+            className="relative border-t border-[#e8ddca] pb-4 pt-4 md:hidden"
+          >
+            <SearchBar value={searchQuery} onChange={handleSearchChange} />
+
+            <SearchDropdown
+              isOpen={searchQuery.trim().length > 0}
+              isSearching={isSearching}
+              searchError={searchError}
+              searchResults={searchResults}
+              onClose={closeSearch}
+            />
           </div>
         )}
+
+        <div className="sr-only" aria-live="polite">
+          {isSearching && "Searching movies."}
+
+          {!isSearching &&
+            !searchError &&
+            debouncedSearchQuery.trim() &&
+            `${searchResults.length} movies found.`}
+
+          {searchError}
+        </div>
       </Container>
     </header>
   );

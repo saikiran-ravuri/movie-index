@@ -52,3 +52,18 @@ export async function getMovieCredits(movieId) {
 
   return Array.isArray(data.cast) ? data.cast : [];
 }
+
+export async function searchMovies(query) {
+  const response = await fetch(
+    `${TMDB_BASE_URL}/search/movie?query=${encodeURIComponent(query)}&include_adult=false`,
+    requestOptions,
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to search movies: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  return Array.isArray(data.results) ? data.results : [];
+}

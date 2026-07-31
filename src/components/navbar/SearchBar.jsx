@@ -1,6 +1,6 @@
 import { Search } from "lucide-react";
 
-function SearchBar() {
+function SearchBar({ value, onChange }) {
   return (
     <div className="w-full">
       <label className="relative block">
@@ -13,6 +13,8 @@ function SearchBar() {
 
         <input
           type="search"
+          value={value}
+          onChange={onChange}
           placeholder="Search movies..."
           className="w-full rounded-full border border-[#d8ccb7] bg-white py-3 pl-12 pr-5 text-[15px] text-[#1f2329] outline-none transition duration-300 placeholder:text-[#958b7c] hover:border-[#cbb996] focus:border-[#b8862d] focus:ring-4 focus:ring-[#b8862d]/10"
         />
