@@ -3,6 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 import { Menu, Search, X } from "lucide-react";
 
 import Container from "../common/Container";
+import SearchBar from "../navbar/SearchBar";
 import logo from "../../assets/logos/movie-index-logo.png";
 
 const menuLinks = [
@@ -40,62 +41,46 @@ function Navbar() {
     };
   }, []);
 
-  function handleSearchSubmit(event) {
-    event.preventDefault();
-  }
-
   function closeMenu() {
     setIsMenuOpen(false);
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#e8ddca] bg-[#f8f4ec]/95 shadow-[0_10px_28px_rgba(72,52,29,0.08)] backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-[#e8ddca] bg-[#f8f4ec]/95 shadow-[0_8px_24px_rgba(72,52,29,0.07)] backdrop-blur-xl">
       <Container>
-        <div className="flex min-h-[78px] items-center justify-between gap-5">
+        <div className="relative flex min-h-[82px] items-center justify-between">
+          {/* Brand */}
           <Link
             to="/"
             onClick={closeMenu}
             aria-label="Go to Movie Index homepage"
-            className="flex min-w-0 items-center gap-3"
+            className="relative z-10 flex shrink-0 items-center gap-3"
           >
             <img
               src={logo}
               alt="Movie Index"
-              className="h-10 w-10 shrink-0 object-contain sm:h-11 sm:w-11"
+              className="h-11 w-11 shrink-0 object-contain sm:h-12 sm:w-12"
             />
 
-            <div className="min-w-0">
-              <h1 className="truncate font-['Cormorant_Garamond'] text-[30px] font-bold leading-none text-[#1f2329] sm:text-[34px]">
+            <div className="hidden min-w-0 xl:block">
+              <h1 className="truncate font-['Cormorant_Garamond'] text-[34px] font-bold leading-none text-[#1f2329]">
                 Movie Index
               </h1>
 
-              <p className="mt-1 truncate text-[8px] font-semibold uppercase tracking-[0.24em] text-[#b8862d] sm:text-[9px]">
+              <p className="mt-1 truncate text-[9px] font-semibold uppercase tracking-[0.24em] text-[#b8862d]">
                 Every Frame Has A Story
               </p>
             </div>
           </Link>
 
-          <div className="flex items-center gap-3">
-            <form
-              onSubmit={handleSearchSubmit}
-              className="hidden w-[260px] lg:block xl:w-[280px]"
-            >
-              <label className="relative block">
-                <span className="sr-only">Search movies</span>
+          {/* Precisely centred tablet and desktop search */}
+          <div className="absolute left-1/2 hidden w-[52%] -translate-x-1/2 md:block lg:w-[56%] xl:w-[52%] 2xl:max-w-[780px]">
+            <SearchBar />
+          </div>
 
-                <Search
-                  size={17}
-                  className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#958b7c]"
-                />
-
-                <input
-                  type="search"
-                  placeholder="Search movies..."
-                  className="w-full rounded-full border border-[#d8ccb7] bg-white/90 py-2.5 pl-10 pr-4 text-sm text-[#1f2329] outline-none transition-all duration-300 placeholder:text-[#958b7c] hover:border-[#cbb996] focus:border-[#b8862d] focus:ring-4 focus:ring-[#b8862d]/10"
-                />
-              </label>
-            </form>
-
+          {/* Right-side actions */}
+          <div className="relative z-10 ml-auto flex shrink-0 items-center gap-3">
+            {/* Phone search button */}
             <button
               type="button"
               onClick={() => {
@@ -106,11 +91,12 @@ function Navbar() {
                 isMobileSearchOpen ? "Close movie search" : "Open movie search"
               }
               aria-expanded={isMobileSearchOpen}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#ddd0bb] bg-white/85 text-[#1f2329] transition duration-300 hover:border-[#b8862d] hover:bg-[#f3e8d4] hover:text-[#9b6417] lg:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#ddd0bb] bg-white/90 text-[#1f2329] transition duration-300 hover:border-[#b8862d] hover:bg-[#f3e8d4] hover:text-[#9b6417] md:hidden"
             >
-              {isMobileSearchOpen ? <X size={19} /> : <Search size={19} />}
+              {isMobileSearchOpen ? <X size={20} /> : <Search size={20} />}
             </button>
 
+            {/* Navigation menu */}
             <div ref={menuRef} className="relative">
               <button
                 type="button"
@@ -122,13 +108,13 @@ function Navbar() {
                   isMenuOpen ? "Close navigation menu" : "Open navigation menu"
                 }
                 aria-expanded={isMenuOpen}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#ddd0bb] bg-white/85 text-[#1f2329] transition duration-300 hover:border-[#b8862d] hover:bg-[#f3e8d4] hover:text-[#9b6417]"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#ddd0bb] bg-white/90 text-[#1f2329] transition duration-300 hover:border-[#b8862d] hover:bg-[#f3e8d4] hover:text-[#9b6417]"
               >
-                {isMenuOpen ? <X size={19} /> : <Menu size={19} />}
+                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
 
               {isMenuOpen && (
-                <div className="absolute right-0 top-[calc(100%+12px)] w-56 overflow-hidden rounded-2xl border border-[#e4d8c5] bg-[#fffdf8] p-2 shadow-[0_10px_28px_rgba(72,52,29,0.08)]">
+                <div className="absolute right-0 top-[calc(100%+12px)] w-56 overflow-hidden rounded-2xl border border-[#e4d8c5] bg-[#fffdf8] p-2 shadow-[0_14px_32px_rgba(72,52,29,0.14)]">
                   <div className="border-b border-[#eee5d8] px-3 pb-3 pt-2">
                     <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-[#b8862d]">
                       Navigation
@@ -163,27 +149,11 @@ function Navbar() {
           </div>
         </div>
 
+        {/* Phone search field */}
         {isMobileSearchOpen && (
-          <form
-            onSubmit={handleSearchSubmit}
-            className="border-t border-[#e8ddca] pb-4 pt-4 lg:hidden"
-          >
-            <label className="relative block">
-              <span className="sr-only">Search movies</span>
-
-              <Search
-                size={17}
-                className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#958b7c]"
-              />
-
-              <input
-                type="search"
-                autoFocus
-                placeholder="Search movies..."
-                className="w-full rounded-full border border-[#d8ccb7] bg-white py-2.5 pl-10 pr-4 text-sm text-[#1f2329] outline-none transition-all duration-300 placeholder:text-[#958b7c] focus:border-[#b8862d] focus:ring-4 focus:ring-[#b8862d]/10"
-              />
-            </label>
-          </form>
+          <div className="border-t border-[#e8ddca] pb-4 pt-4 md:hidden">
+            <SearchBar />
+          </div>
         )}
       </Container>
     </header>
