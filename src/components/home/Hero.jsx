@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-
 import Container from "../common/Container";
 
 function Hero() {
