@@ -43,12 +43,12 @@ function Hero() {
               Discover Movies
             </button>
 
-            <Link
+            {/* <Link
               to="/watchlist"
               className="w-full rounded-full border border-[#d8ccb7] bg-white px-8 py-3.5 text-center text-sm font-semibold text-[#1f2329] transition duration-300 hover:border-[#b8862d] hover:text-[#b8862d] sm:w-auto"
             >
               My Watchlist
-            </Link>
+            </Link> */}
           </div>
         </div>
       </Container>

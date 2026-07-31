@@ -1,12 +1,18 @@
+import { Bookmark, BookmarkCheck } from "lucide-react";
+
 import Container from "../common/Container";
+import { useWatchlist } from "../../hooks/useWatchlist";
 import { getBackdropUrl, getPosterUrl } from "../../utils/image";
 
 function MovieHero({ movie }) {
+  const { isInWatchlist, toggleWatchlist } = useWatchlist();
+
   const backdropUrl = getBackdropUrl(movie.backdrop_path);
   const posterUrl = getPosterUrl(movie.poster_path);
 
   const releaseYear = movie.release_date?.slice(0, 4) || "N/A";
   const rating = Number(movie.vote_average || 0).toFixed(1);
+  const saved = isInWatchlist(movie.id);
 
   const runtimeHours = Math.floor((movie.runtime || 0) / 60);
   const runtimeMinutes = (movie.runtime || 0) % 60;
@@ -14,6 +20,10 @@ function MovieHero({ movie }) {
   const formattedRuntime = movie.runtime
     ? `${runtimeHours}h ${runtimeMinutes}m`
     : "N/A";
+
+  function handleWatchlistClick() {
+    toggleWatchlist(movie);
+  }
 
   return (
     <section className="bg-[#F7F2E9] py-6 sm:py-8 lg:py-10">
@@ -117,6 +127,20 @@ function MovieHero({ movie }) {
                       "Movie description is currently unavailable."}
                   </p>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={handleWatchlistClick}
+                  className={`mt-8 inline-flex items-center gap-2 rounded-full border px-6 py-3 text-sm font-semibold transition duration-300 focus:outline-none focus:ring-4 focus:ring-[#D5A64E]/30 ${
+                    saved
+                      ? "border-[#D5A64E] bg-[#D5A64E] text-[#1F2329] hover:bg-[#E3B45D]"
+                      : "border-white/25 bg-white/10 text-white hover:border-[#D5A64E] hover:bg-[#D5A64E] hover:text-[#1F2329]"
+                  }`}
+                >
+                  {saved ? <BookmarkCheck size={18} /> : <Bookmark size={18} />}
+
+                  {saved ? "Remove from Watchlist" : "Add to Watchlist"}
+                </button>
               </div>
             </div>
           </div>
