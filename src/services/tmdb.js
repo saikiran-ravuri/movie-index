@@ -22,8 +22,24 @@ async function fetchMovieList(endpoint, errorMessage) {
   return Array.isArray(data.results) ? data.results : [];
 }
 
-export function getPopularMovies() {
-  return fetchMovieList("/movie/popular", "Failed to fetch popular movies");
+export async function getPopularMovies(page = 1) {
+  const response = await fetch(
+    `${TMDB_BASE_URL}/movie/popular?page=${page}`,
+    requestOptions,
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch popular movies: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  return {
+    movies: Array.isArray(data.results) ? data.results : [],
+    page: data.page,
+    totalPages: data.total_pages,
+    totalResults: data.total_results,
+  };
 }
 
 export function getTrendingMovies() {

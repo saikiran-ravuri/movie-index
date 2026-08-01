@@ -2,7 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import Container from "../common/Container";
-import logo from "../../assets/logos/movie-index-logo.png";
+import logo from "../../assets/logos/movie-index-logo.jpg";
 
 const footerLinks = [
   { label: "Home", to: "/" },

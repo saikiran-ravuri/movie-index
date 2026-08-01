@@ -7,7 +7,7 @@ import SearchBar from "../navbar/SearchBar";
 import SearchDropdown from "../navbar/SearchDropdown";
 import useDebounce from "../../hooks/useDebounce";
 import { searchMovies } from "../../services/tmdb";
-import logo from "../../assets/logos/movie-index-logo.png";
+import logo from "../../assets/logos/movie-index-logo.jpg";
 
 const menuLinks = [
   { name: "Home", path: "/" },
