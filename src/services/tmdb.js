@@ -11,40 +11,71 @@ const requestOptions = {
   },
 };
 
-async function fetchMovieList(endpoint, errorMessage) {
+async function fetchJson(endpoint, errorMessage) {
   const response = await fetch(`${TMDB_BASE_URL}${endpoint}`, requestOptions);
 
   if (!response.ok) {
     throw new Error(`${errorMessage}: ${response.status}`);
   }
 
-  const data = await response.json();
+  return response.json();
+}
+
+async function fetchMovieList(endpoint, errorMessage) {
+  const data = await fetchJson(endpoint, errorMessage);
 
   return Array.isArray(data.results) ? data.results : [];
 }
 
-export async function getPopularMovies(page = 1) {
+function normalizePage(page) {
   const requestedPage = Number(page) || 1;
 
-  const safePage = Math.min(Math.max(requestedPage, 1), MAX_MOVIE_PAGES);
+  return Math.min(Math.max(requestedPage, 1), MAX_MOVIE_PAGES);
+}
 
-  const response = await fetch(
-    `${TMDB_BASE_URL}/movie/popular?page=${safePage}`,
-    requestOptions,
-  );
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch popular movies: ${response.status}`);
-  }
-
-  const data = await response.json();
-
+function createPaginatedMovieResponse(data, fallbackPage) {
   return {
     movies: Array.isArray(data.results) ? data.results : [],
-    page: Number(data.page) || safePage,
+    page: Number(data.page) || fallbackPage,
     totalPages: Math.min(Number(data.total_pages) || 1, MAX_MOVIE_PAGES),
     totalResults: Number(data.total_results) || 0,
   };
+}
+
+export async function getPopularMovies(page = 1) {
+  const safePage = normalizePage(page);
+
+  const data = await fetchJson(
+    `/movie/popular?page=${safePage}`,
+    "Failed to fetch popular movies",
+  );
+
+  return createPaginatedMovieResponse(data, safePage);
+}
+
+export async function getMoviesByGenre(genreId, page = 1) {
+  const safePage = normalizePage(page);
+  const normalizedGenreId = Number(genreId);
+
+  if (!normalizedGenreId) {
+    return getPopularMovies(safePage);
+  }
+
+  const data = await fetchJson(
+    `/discover/movie?include_adult=false&include_video=false&page=${safePage}&sort_by=popularity.desc&with_genres=${normalizedGenreId}`,
+    "Failed to fetch movies by genre",
+  );
+
+  return createPaginatedMovieResponse(data, safePage);
+}
+
+export async function getMovieGenres() {
+  const data = await fetchJson(
+    "/genre/movie/list",
+    "Failed to fetch movie genres",
+  );
+
+  return Array.isArray(data.genres) ? data.genres : [];
 }
 
 export function getTrendingMovies() {
@@ -58,30 +89,15 @@ export function getTopRatedMovies() {
   return fetchMovieList("/movie/top_rated", "Failed to fetch top-rated movies");
 }
 
-export async function getMovieDetails(movieId) {
-  const response = await fetch(
-    `${TMDB_BASE_URL}/movie/${movieId}`,
-    requestOptions,
-  );
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch movie details: ${response.status}`);
-  }
-
-  return response.json();
+export function getMovieDetails(movieId) {
+  return fetchJson(`/movie/${movieId}`, "Failed to fetch movie details");
 }
 
 export async function getMovieCredits(movieId) {
-  const response = await fetch(
-    `${TMDB_BASE_URL}/movie/${movieId}/credits`,
-    requestOptions,
+  const data = await fetchJson(
+    `/movie/${movieId}/credits`,
+    "Failed to fetch movie credits",
   );
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch movie credits: ${response.status}`);
-  }
-
-  const data = await response.json();
 
   return Array.isArray(data.cast) ? data.cast : [];
 }

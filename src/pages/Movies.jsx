@@ -1,10 +1,17 @@
 import { RotateCcw, TriangleAlert } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Container from "../components/common/Container";
+import GenreFilter from "../components/movies/GenreFilter";
 import MovieCard from "../components/movies/MovieCard";
 import Pagination from "../components/movies/Pagination";
-import { getPopularMovies } from "../services/tmdb";
+import {
+  getMovieGenres,
+  getMoviesByGenre,
+  getPopularMovies,
+} from "../services/tmdb";
+
+const FEATURED_GENRE_IDS = [28, 12, 16, 35, 18, 878];
 
 function MovieCardSkeleton() {
   return (
@@ -26,12 +33,54 @@ function MovieCardSkeleton() {
 
 function Movies() {
   const [movies, setMovies] = useState([]);
+  const [genres, setGenres] = useState([]);
+  const [selectedGenre, setSelectedGenre] = useState("");
+
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
   const [loading, setLoading] = useState(true);
+  const [genresLoading, setGenresLoading] = useState(true);
   const [error, setError] = useState("");
   const [retryKey, setRetryKey] = useState(0);
+
+  const featuredGenres = useMemo(() => {
+    return FEATURED_GENRE_IDS.map((genreId) =>
+      genres.find((genre) => genre.id === genreId),
+    ).filter(Boolean);
+  }, [genres]);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function fetchGenres() {
+      try {
+        setGenresLoading(true);
+
+        const genreList = await getMovieGenres();
+
+        if (!isCancelled) {
+          setGenres(genreList);
+        }
+      } catch (error) {
+        console.error("Failed to fetch movie genres:", error);
+
+        if (!isCancelled) {
+          setGenres([]);
+        }
+      } finally {
+        if (!isCancelled) {
+          setGenresLoading(false);
+        }
+      }
+    }
+
+    fetchGenres();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     window.scrollTo({
@@ -48,7 +97,9 @@ function Movies() {
         setLoading(true);
         setError("");
 
-        const data = await getPopularMovies(page);
+        const data = selectedGenre
+          ? await getMoviesByGenre(selectedGenre, page)
+          : await getPopularMovies(page);
 
         if (isCancelled) {
           return;
@@ -76,10 +127,15 @@ function Movies() {
     return () => {
       isCancelled = true;
     };
-  }, [page, retryKey]);
+  }, [page, selectedGenre, retryKey]);
 
   function handleRetry() {
     setRetryKey((currentKey) => currentKey + 1);
+  }
+
+  function handleGenreChange(genreId) {
+    setSelectedGenre(genreId);
+    setPage(1);
   }
 
   function handlePreviousPage() {
@@ -126,6 +182,15 @@ function Movies() {
                 {movies.length} {movies.length === 1 ? "Movie" : "Movies"}
               </span>
             )}
+          </div>
+
+          <div className="relative z-30 mb-8 rounded-2xl border border-[#E2D3BC] bg-white p-5 shadow-[0_6px_18px_rgba(67,52,35,0.05)]">
+            <GenreFilter
+              genres={featuredGenres}
+              selectedGenre={selectedGenre}
+              onGenreChange={handleGenreChange}
+              disabled={loading || genresLoading}
+            />
           </div>
 
           {loading && (
@@ -186,7 +251,7 @@ function Movies() {
               </h2>
 
               <p className="mt-3 text-sm leading-7 text-stone-600 sm:text-base">
-                The movie collection is currently empty.
+                No movies are currently available for the selected genre.
               </p>
             </div>
           )}
