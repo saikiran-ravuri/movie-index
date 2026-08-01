@@ -10,6 +10,7 @@ import {
 
 import Container from "../components/common/Container";
 import logo from "../assets/logos/movie-index-logo.jpg";
+import tmdbLogo from "../assets/logos/tmdb-logo.svg";
 
 const engineeringPrinciples = [
   "Component-based architecture",
@@ -229,25 +230,40 @@ function About() {
           </section>
 
           {/* Data and Attribution */}
+          {/* Data and Attribution */}
           <section className="pt-14 sm:pt-16 lg:pt-20">
             <div className="rounded-[30px] border border-[#DED0B9] bg-white px-7 py-8 shadow-[0_6px_20px_rgba(67,52,35,0.05)] sm:px-10">
-              <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#9B6417]">
-                    Data and Storage
+                    Data & Attribution
                   </p>
 
                   <p className="mt-3 max-w-3xl text-sm leading-7 text-stone-600 sm:text-base">
-                    Movie information is retrieved from The Movie Database API.
-                    Watchlist data is stored locally in the current browser and
-                    is not synchronized between browsers or devices.
+                    Movie information displayed throughout Movie Index is
+                    provided by
+                    <span className="font-semibold text-[#1F2329]">
+                      {" "}
+                      The Movie Database (TMDB)
+                    </span>
+                    . Your watchlist is stored locally in your browser using
+                    Local Storage and is never uploaded or shared with any
+                    external service.
                   </p>
                 </div>
 
-                <p className="rounded-2xl bg-[#F7F0E4] px-5 py-4 text-xs leading-6 text-stone-500 lg:max-w-sm">
-                  This product uses the TMDB API but is not endorsed or
-                  certified by TMDB.
-                </p>
+                <div className="rounded-2xl border border-[#E8DBC7] bg-[#F7F0E4] px-6 py-5 text-center lg:max-w-sm">
+                  <img
+                    src={tmdbLogo}
+                    alt="The Movie Database (TMDB)"
+                    className="mx-auto h-8 w-auto object-contain"
+                  />
+
+                  <p className="mt-4 text-xs leading-6 text-stone-500">
+                    This product uses the TMDB API but is not endorsed or
+                    certified by TMDB.
+                  </p>
+                </div>
               </div>
             </div>
           </section>

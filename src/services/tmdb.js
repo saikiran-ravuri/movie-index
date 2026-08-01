@@ -1,4 +1,5 @@
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
+const MAX_MOVIE_PAGES = 5;
 
 const TMDB_TOKEN = import.meta.env.VITE_TMDB_ACCESS_TOKEN;
 
@@ -23,8 +24,12 @@ async function fetchMovieList(endpoint, errorMessage) {
 }
 
 export async function getPopularMovies(page = 1) {
+  const requestedPage = Number(page) || 1;
+
+  const safePage = Math.min(Math.max(requestedPage, 1), MAX_MOVIE_PAGES);
+
   const response = await fetch(
-    `${TMDB_BASE_URL}/movie/popular?page=${page}`,
+    `${TMDB_BASE_URL}/movie/popular?page=${safePage}`,
     requestOptions,
   );
 
@@ -36,9 +41,9 @@ export async function getPopularMovies(page = 1) {
 
   return {
     movies: Array.isArray(data.results) ? data.results : [],
-    page: data.page,
-    totalPages: data.total_pages,
-    totalResults: data.total_results,
+    page: Number(data.page) || safePage,
+    totalPages: Math.min(Number(data.total_pages) || 1, MAX_MOVIE_PAGES),
+    totalResults: Number(data.total_results) || 0,
   };
 }
 
@@ -82,7 +87,13 @@ export async function getMovieCredits(movieId) {
 }
 
 export function searchMovies(query) {
-  const encodedQuery = encodeURIComponent(query.trim());
+  const normalizedQuery = query.trim();
+
+  if (!normalizedQuery) {
+    return Promise.resolve([]);
+  }
+
+  const encodedQuery = encodeURIComponent(normalizedQuery);
 
   return fetchMovieList(
     `/search/movie?query=${encodedQuery}&include_adult=false`,
