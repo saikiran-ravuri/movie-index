@@ -55,7 +55,7 @@ function About() {
       <Container>
         <div className="mx-auto max-w-6xl">
           {/* Hero */}
-          <section className="relative overflow-hidden rounded-[32px] border border-[#D7C6AA] bg-[linear-gradient(135deg,#17191D_0%,#24211D_52%,#181A1E_100%)] px-7 py-9 shadow-[0_22px_55px_rgba(67,52,35,0.18)] sm:px-10 sm:py-11 lg:px-14 lg:py-12">
+          <section className="relative overflow-hidden rounded-[32px] border border-[#D7C6AA] bg-[linear-gradient(135deg,#17191D_0%,#24211D_52%,#181A1E_100%)] px-7 py-8 shadow-[0_22px_55px_rgba(67,52,35,0.18)] sm:px-10 sm:py-10 lg:px-14 lg:py-11">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_86%_16%,rgba(184,134,45,0.22),transparent_34%)]" />
 
             <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full border border-[#D5A64E]/15" />
@@ -96,11 +96,7 @@ function About() {
               </div>
 
               <aside className="rounded-3xl border border-white/10 bg-white/[0.08] p-7 shadow-[0_12px_32px_rgba(0,0,0,0.18)] backdrop-blur-md">
-                {/* <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#D5A64E]/15 text-[#D5A64E]">
-                  <UserRound size={23} />
-                </div> */}
-
-                <p className="mt-5 text-[10px] font-semibold uppercase tracking-[0.25em] text-white/45">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-white/45">
                   Designed and developed by
                 </p>
 
@@ -120,8 +116,8 @@ function About() {
                   rel="noopener noreferrer"
                   className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#D5A64E] px-5 py-2.5 text-sm font-semibold text-[#1F2329] shadow-[0_8px_18px_rgba(213,166,78,0.22)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#E3B45D] focus:outline-none focus:ring-4 focus:ring-[#D5A64E]/25"
                 >
-                  GitHub Profile
-                  <ArrowUpRight size={16} />
+                  View GitHub
+                  <ArrowUpRight size={16} aria-hidden="true" />
                 </a>
               </aside>
             </div>
@@ -152,10 +148,10 @@ function About() {
                 {engineeringPrinciples.map((principle) => (
                   <div
                     key={principle}
-                    className="flex items-center gap-4 rounded-2xl border border-[#E2D3BC] bg-white px-5 py-4 shadow-[0_5px_18px_rgba(67,52,35,0.05)]"
+                    className="flex items-center gap-4 rounded-2xl border border-[#E2D3BC] bg-white px-5 py-4 shadow-[0_5px_18px_rgba(67,52,35,0.05)] transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-[#B8862D]/35 hover:shadow-[0_10px_24px_rgba(67,52,35,0.08)]"
                   >
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#F7F0E4] text-[#B8862D]">
-                      <Check size={16} strokeWidth={2.5} />
+                      <Check size={16} strokeWidth={2.5} aria-hidden="true" />
                     </span>
 
                     <p className="text-sm font-medium text-stone-700 sm:text-base">
@@ -183,9 +179,13 @@ function About() {
               {technologies.map(({ name, icon: Icon }) => (
                 <article
                   key={name}
-                  className="group flex min-h-[130px] flex-col items-center justify-center rounded-2xl border border-[#E2D3BC] bg-white p-5 text-center shadow-[0_5px_18px_rgba(67,52,35,0.05)] transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-[#B8862D]/40 hover:shadow-[0_12px_26px_rgba(67,52,35,0.09)]"
+                  className="group flex min-h-[120px] flex-col items-center justify-center rounded-2xl border border-[#E2D3BC] bg-white p-5 text-center shadow-[0_5px_18px_rgba(67,52,35,0.05)] transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-[#B8862D]/40 hover:shadow-[0_12px_26px_rgba(67,52,35,0.09)]"
                 >
-                  <Icon size={24} className="text-[#B8862D]" />
+                  <Icon
+                    size={24}
+                    className="text-[#B8862D]"
+                    aria-hidden="true"
+                  />
 
                   <h3 className="mt-4 text-sm font-semibold text-[#1F2329]">
                     {name}
@@ -197,7 +197,7 @@ function About() {
 
           {/* Development Approach */}
           <section>
-            <div className="rounded-[32px] border border-[#DCCDB5] bg-[#EFE5D5] p-7 sm:p-10 lg:p-12">
+            <div className="rounded-[32px] border border-[#DCCDB5] bg-[#F3EBDE] p-7 sm:p-10 lg:p-12">
               <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[#9B6417] sm:text-sm">
