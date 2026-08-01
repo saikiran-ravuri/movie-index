@@ -3,6 +3,7 @@ import MovieCarousel from "../home/MovieCarousel";
 import MovieCard from "./MovieCard";
 
 function MovieList({
+  id,
   eyebrow = "Discover",
   title = "Popular Movies",
   movies = [],
@@ -10,11 +11,11 @@ function MovieList({
   const movieList = Array.isArray(movies) ? movies : [];
 
   return (
-    <section className="pb-8 sm:pb-10 lg:pb-12">
+    <section id={id} className="pb-8 sm:pb-10 lg:pb-12">
       <Container>
         <div className="mb-6 flex flex-wrap items-end justify-between gap-5 sm:mb-8">
           <div>
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.30em] text-[#B8862D]">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-[#B8862D]">
               {eyebrow}
             </p>
 
