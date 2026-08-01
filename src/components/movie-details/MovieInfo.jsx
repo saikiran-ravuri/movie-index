@@ -1,3 +1,12 @@
+import {
+  Banknote,
+  CalendarDays,
+  CircleDollarSign,
+  Clock3,
+  Languages,
+  Clapperboard,
+} from "lucide-react";
+
 import Container from "../common/Container";
 import InfoCard from "../common/InfoCard";
 
@@ -18,12 +27,15 @@ function MovieInfo({ movie }) {
     : "Unavailable";
 
   function formatCurrency(amount) {
-    if (!amount) return "Unavailable";
+    if (!amount || amount <= 0) {
+      return "Unavailable";
+    }
 
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
-      maximumFractionDigits: 0,
+      notation: "compact",
+      maximumFractionDigits: 1,
     }).format(amount);
   }
 
@@ -38,59 +50,62 @@ function MovieInfo({ movie }) {
     {
       label: "Release Date",
       value: formattedReleaseDate,
-      icon: "📅",
+      icon: CalendarDays,
     },
     {
       label: "Runtime",
       value: formattedRuntime,
-      icon: "⏱",
+      icon: Clock3,
     },
     {
       label: "Budget",
       value: formatCurrency(movie.budget),
-      icon: "💰",
+      icon: CircleDollarSign,
     },
     {
       label: "Revenue",
       value: formatCurrency(movie.revenue),
-      icon: "💵",
+      icon: Banknote,
     },
     {
       label: "Original Language",
       value: originalLanguage,
-      icon: "🌐",
+      icon: Languages,
     },
     {
       label: "Status",
       value: movie.status || "Unavailable",
-      icon: "🎬",
+      icon: Clapperboard,
     },
   ];
 
   return (
-    <section>
+    <section aria-labelledby="movie-information-heading">
       <Container>
-        <div className="mb-9 sm:mb-11">
+        <div className="mb-7 sm:mb-9">
           <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[#9B6417] sm:text-sm">
             At a Glance
           </p>
 
-          <h2 className="mt-3 font-['Cormorant_Garamond'] text-4xl font-bold text-stone-900 sm:text-5xl">
+          <h2
+            id="movie-information-heading"
+            className="mt-3 font-['Cormorant_Garamond'] text-4xl font-bold leading-tight text-[#1F2329] sm:text-5xl"
+          >
             Movie Information
           </h2>
 
-          <p className="mt-3 max-w-2xl text-base leading-7 text-stone-600">
-            Key production, release, and financial details about the movie.
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-600 sm:text-base">
+            Key release, production, language, and financial information.
           </p>
         </div>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-          {movieInformation.map((item) => (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+          {movieInformation.map(({ label, value, icon: Icon }) => (
             <InfoCard
-              key={item.label}
-              label={item.label}
-              value={item.value}
-              icon={item.icon}
+              key={label}
+              label={label}
+              value={value}
+              icon={<Icon size={20} aria-hidden="true" />}
             />
           ))}
         </div>

@@ -16,18 +16,18 @@ function Footer() {
   return (
     <footer className="mt-12 border-t border-[#E8DDCA] bg-[#F8F4EC]">
       <Container>
-        <div className="py-10">
+        <div className="py-9 sm:py-10">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-xl">
               <Link
                 to="/"
                 aria-label="Go to Movie Index homepage"
-                className="inline-flex items-center gap-3"
+                className="inline-flex items-center gap-3 rounded-xl focus:outline-none focus:ring-4 focus:ring-[#B8862D]/20"
               >
                 <img
                   src={logo}
                   alt="Movie Index logo"
-                  className="h-11 w-11 shrink-0 object-contain sm:h-12 sm:w-12"
+                  className="h-12 w-12 shrink-0 object-contain sm:h-14 sm:w-14"
                 />
 
                 <div>
@@ -59,7 +59,7 @@ function Footer() {
                     <li key={link.to}>
                       <Link
                         to={link.to}
-                        className="text-sm font-medium text-stone-600 transition-colors duration-300 hover:text-[#9B6417]"
+                        className="rounded-md text-sm font-medium text-stone-600 transition-colors duration-300 hover:text-[#9B6417] focus:outline-none focus:ring-4 focus:ring-[#B8862D]/15"
                       >
                         {link.label}
                       </Link>
@@ -71,10 +71,10 @@ function Footer() {
                       href="https://github.com/saikiran-ravuri"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-sm font-medium text-stone-600 transition-colors duration-300 hover:text-[#9B6417]"
+                      className="inline-flex items-center gap-1.5 rounded-md text-sm font-medium text-stone-600 transition-colors duration-300 hover:text-[#9B6417] focus:outline-none focus:ring-4 focus:ring-[#B8862D]/15"
                     >
                       GitHub Profile
-                      <ArrowUpRight size={14} />
+                      <ArrowUpRight size={14} aria-hidden="true" />
                     </a>
                   </li>
                 </ul>
@@ -82,17 +82,19 @@ function Footer() {
             </div>
           </div>
 
-          <div className="mt-8 flex flex-col gap-4 border-t border-[#EEE4D6] pt-4 text-xs text-stone-500 sm:flex-row sm:items-center sm:justify-between">
-            <p>© {currentYear} Movie Index. All rights reserved.</p>
+          <div className="mt-8 flex flex-col gap-4 border-t border-[#EEE4D6] pt-4 text-xs text-stone-500 sm:flex-row sm:items-end sm:justify-between">
+            <p>© {currentYear} Movie Index · All rights reserved.</p>
 
             <div className="sm:text-right">
-              <p>Designed &amp; Developed by</p>
+              <p className="uppercase tracking-[0.12em] text-stone-500">
+                Designed &amp; Developed by
+              </p>
 
               <a
                 href="https://github.com/saikiran-ravuri"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-1 inline-block font-semibold text-[#9B6417] transition-colors duration-300 hover:text-[#B8862D]"
+                className="mt-1 inline-block rounded-md text-sm font-semibold text-[#9B6417] transition-colors duration-300 hover:text-[#B8862D] focus:outline-none focus:ring-4 focus:ring-[#B8862D]/15"
               >
                 Ravuri Sai Kiran
               </a>
