@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import Container from "../components/common/Container";
 import MovieCard from "../components/movies/MovieCard";
+import Pagination from "../components/movies/Pagination";
 import { getPopularMovies } from "../services/tmdb";
 
 function MovieCardSkeleton() {
@@ -25,9 +26,19 @@ function MovieCardSkeleton() {
 
 function Movies() {
   const [movies, setMovies] = useState([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [retryKey, setRetryKey] = useState(0);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [page]);
 
   useEffect(() => {
     let isCancelled = false;
@@ -37,18 +48,20 @@ function Movies() {
         setLoading(true);
         setError("");
 
-        const data = await getPopularMovies(1);
+        const data = await getPopularMovies(page);
 
         if (isCancelled) {
           return;
         }
 
         setMovies(data.movies);
+        setTotalPages(data.totalPages);
       } catch (error) {
         console.error("Failed to fetch movies:", error);
 
         if (!isCancelled) {
           setMovies([]);
+          setTotalPages(1);
           setError("We couldn’t load the movie collection right now.");
         }
       } finally {
@@ -63,10 +76,26 @@ function Movies() {
     return () => {
       isCancelled = true;
     };
-  }, [retryKey]);
+  }, [page, retryKey]);
 
   function handleRetry() {
     setRetryKey((currentKey) => currentKey + 1);
+  }
+
+  function handlePreviousPage() {
+    if (page <= 1 || loading) {
+      return;
+    }
+
+    setPage((currentPage) => currentPage - 1);
+  }
+
+  function handleNextPage() {
+    if (page >= totalPages || loading) {
+      return;
+    }
+
+    setPage((currentPage) => currentPage + 1);
   }
 
   return (
@@ -133,11 +162,21 @@ function Movies() {
           )}
 
           {!loading && !error && movies.length > 0 && (
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
-              {movies.map((movie) => (
-                <MovieCard key={movie.id} movie={movie} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+                {movies.map((movie) => (
+                  <MovieCard key={movie.id} movie={movie} />
+                ))}
+              </div>
+
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPrevious={handlePreviousPage}
+                onNext={handleNextPage}
+                disabled={loading}
+              />
+            </>
           )}
 
           {!loading && !error && movies.length === 0 && (
