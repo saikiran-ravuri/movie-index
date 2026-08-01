@@ -3,40 +3,71 @@ import { useEffect, useState } from "react";
 import Hero from "../components/home/Hero";
 import MovieBanner from "../components/home/MovieBanner";
 import MovieList from "../components/movies/MovieList";
-import { getPopularMovies } from "../services/tmdb";
+import {
+  getPopularMovies,
+  getTopRatedMovies,
+  getTrendingMovies,
+} from "../services/tmdb";
 
 function Home() {
-  const [movies, setMovies] = useState([]);
+  const [popularMovies, setPopularMovies] = useState([]);
+  const [trendingMovies, setTrendingMovies] = useState([]);
+  const [topRatedMovies, setTopRatedMovies] = useState([]);
   const [featuredMovie, setFeaturedMovie] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function fetchPopularMovies() {
+    let isCancelled = false;
+
+    async function fetchHomeMovies() {
       try {
         setLoading(true);
         setError("");
 
-        const popularMovies = await getPopularMovies();
+        const [popular, trending, topRated] = await Promise.all([
+          getPopularMovies(),
+          getTrendingMovies(),
+          getTopRatedMovies(),
+        ]);
 
-        setMovies(popularMovies);
+        if (isCancelled) {
+          return;
+        }
 
-        if (popularMovies.length > 0) {
-          const randomIndex = Math.floor(Math.random() * popularMovies.length);
-          setFeaturedMovie(popularMovies[randomIndex]);
+        setPopularMovies(popular);
+        setTrendingMovies(trending);
+        setTopRatedMovies(topRated);
+
+        if (popular.length > 0) {
+          const randomIndex = Math.floor(Math.random() * popular.length);
+          setFeaturedMovie(popular[randomIndex]);
+        } else {
+          setFeaturedMovie(null);
         }
       } catch (error) {
-        console.error("Failed to fetch popular movies:", error);
+        console.error("Failed to fetch home movies:", error);
 
-        setMovies([]);
-        setFeaturedMovie(null);
-        setError("Unable to load movies. Please try again.");
+        if (!isCancelled) {
+          setPopularMovies([]);
+          setTrendingMovies([]);
+          setTopRatedMovies([]);
+          setFeaturedMovie(null);
+          setError("Unable to load movies. Please try again.");
+        }
       } finally {
-        setLoading(false);
+        if (!isCancelled) {
+          setLoading(false);
+        }
       }
     }
 
-    fetchPopularMovies();
+    fetchHomeMovies();
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   return (
@@ -57,7 +88,27 @@ function Home() {
         </p>
       )}
 
-      {!loading && !error && <MovieList movies={movies} />}
+      {!loading && !error && (
+        <>
+          <MovieList
+            eyebrow="Discover"
+            title="Popular Movies"
+            movies={popularMovies}
+          />
+
+          <MovieList
+            eyebrow="Trending"
+            title="Trending This Week"
+            movies={trendingMovies}
+          />
+
+          <MovieList
+            eyebrow="Top Rated"
+            title="Top Rated Movies"
+            movies={topRatedMovies}
+          />
+        </>
+      )}
     </main>
   );
 }

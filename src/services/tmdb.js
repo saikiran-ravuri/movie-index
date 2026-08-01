@@ -10,19 +10,31 @@ const requestOptions = {
   },
 };
 
-export async function getPopularMovies() {
-  const response = await fetch(
-    `${TMDB_BASE_URL}/movie/popular`,
-    requestOptions,
-  );
+async function fetchMovieList(endpoint, errorMessage) {
+  const response = await fetch(`${TMDB_BASE_URL}${endpoint}`, requestOptions);
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch popular movies: ${response.status}`);
+    throw new Error(`${errorMessage}: ${response.status}`);
   }
 
   const data = await response.json();
 
   return Array.isArray(data.results) ? data.results : [];
+}
+
+export function getPopularMovies() {
+  return fetchMovieList("/movie/popular", "Failed to fetch popular movies");
+}
+
+export function getTrendingMovies() {
+  return fetchMovieList(
+    "/trending/movie/week",
+    "Failed to fetch trending movies",
+  );
+}
+
+export function getTopRatedMovies() {
+  return fetchMovieList("/movie/top_rated", "Failed to fetch top-rated movies");
 }
 
 export async function getMovieDetails(movieId) {
@@ -53,17 +65,11 @@ export async function getMovieCredits(movieId) {
   return Array.isArray(data.cast) ? data.cast : [];
 }
 
-export async function searchMovies(query) {
-  const response = await fetch(
-    `${TMDB_BASE_URL}/search/movie?query=${encodeURIComponent(query)}&include_adult=false`,
-    requestOptions,
+export function searchMovies(query) {
+  const encodedQuery = encodeURIComponent(query.trim());
+
+  return fetchMovieList(
+    `/search/movie?query=${encodedQuery}&include_adult=false`,
+    "Failed to search movies",
   );
-
-  if (!response.ok) {
-    throw new Error(`Failed to search movies: ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  return Array.isArray(data.results) ? data.results : [];
 }

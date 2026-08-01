@@ -2,20 +2,24 @@ import Container from "../common/Container";
 import MovieCarousel from "../home/MovieCarousel";
 import MovieCard from "./MovieCard";
 
-function MovieList({ movies = [] }) {
+function MovieList({
+  eyebrow = "Discover",
+  title = "Popular Movies",
+  movies = [],
+}) {
   const movieList = Array.isArray(movies) ? movies : [];
 
   return (
-    <section id="popular-movies" className="pb-16 sm:pb-20 lg:pb-24">
+    <section className="pb-8 sm:pb-10 lg:pb-12">
       <Container>
-        <div className="mb-8 flex flex-wrap items-end justify-between gap-5 sm:mb-10">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-5 sm:mb-8">
           <div>
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.30em] text-[#B8862D]">
-              Discover
+              {eyebrow}
             </p>
 
             <h2 className="font-['Cormorant_Garamond'] text-4xl font-bold leading-none text-[#1F2329] sm:text-5xl">
-              Popular Movies
+              {title}
             </h2>
           </div>
 
@@ -25,7 +29,7 @@ function MovieList({ movies = [] }) {
         </div>
 
         {movieList.length > 0 ? (
-          <MovieCarousel ariaLabel="Popular movies">
+          <MovieCarousel ariaLabel={title}>
             {movieList.map((movie) => (
               <div
                 key={movie.id}
