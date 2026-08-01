@@ -5,7 +5,6 @@ import {
   Database,
   Layers3,
   Route,
-  UserRound,
   Zap,
 } from "lucide-react";
 
