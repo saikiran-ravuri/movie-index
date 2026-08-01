@@ -3,6 +3,7 @@ import {
   Check,
   Code2,
   Database,
+  HardDrive,
   Layers3,
   Route,
   Zap,
@@ -16,9 +17,11 @@ const engineeringPrinciples = [
   "Component-based architecture",
   "Reusable UI components",
   "Clear separation of responsibilities",
+  "API service layer",
   "Context API for shared state",
   "Custom React hooks",
   "Debounced movie search",
+  "Loading, error, and empty states",
   "Responsive interface design",
   "Persistent Local Storage",
 ];
@@ -37,12 +40,16 @@ const technologies = [
     icon: Layers3,
   },
   {
-    name: "React Router",
+    name: "React Router DOM",
     icon: Route,
   },
   {
     name: "TMDB API",
     icon: Database,
+  },
+  {
+    name: "Local Storage",
+    icon: HardDrive,
   },
   {
     name: "Lucide React",
@@ -91,8 +98,9 @@ function About() {
 
                 <p className="mt-5 max-w-2xl text-base leading-8 text-white/70 sm:text-lg">
                   Movie Index is a focused React application that combines movie
-                  discovery, detailed information, live search, and a personal
-                  watchlist within one clear and consistent experience.
+                  discovery, detailed information, live search, filtering,
+                  sorting, pagination, and a personal watchlist within one clear
+                  and consistent experience.
                 </p>
               </div>
 
@@ -107,8 +115,8 @@ function About() {
 
                 <p className="mt-3 text-sm leading-6 text-white/70">
                   Computer Science graduate building product-focused React
-                  applications with attention to clean structure, usability, and
-                  maintainability.
+                  applications with attention to clean structure, usability,
+                  maintainability, and thoughtful user experience.
                 </p>
 
                 <a
@@ -126,7 +134,7 @@ function About() {
 
           {/* Engineering Principles */}
           <section className="py-14 sm:py-16 lg:py-20">
-            <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16">
+            <div className="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:gap-16">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[#9B6417] sm:text-sm">
                   Engineering Principles
@@ -140,8 +148,8 @@ function About() {
 
                 <p className="mt-5 max-w-xl text-base leading-8 text-stone-600">
                   The project is organized around focused modules instead of
-                  large components that mix interface, API, storage, and
-                  navigation responsibilities.
+                  large components that mix interface, API, storage, navigation,
+                  and state-management responsibilities.
                 </p>
               </div>
 
@@ -176,7 +184,7 @@ function About() {
               </h2>
             </div>
 
-            <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
               {technologies.map(({ name, icon: Icon }) => (
                 <article
                   key={name}
@@ -221,8 +229,8 @@ function About() {
 
                   <p>
                     The project prioritizes maintainable structure, consistent
-                    interaction patterns, and useful functionality over feature
-                    quantity.
+                    interaction patterns, clear asynchronous states, and useful
+                    functionality over unnecessary feature quantity.
                   </p>
                 </div>
               </div>
@@ -230,13 +238,12 @@ function About() {
           </section>
 
           {/* Data and Attribution */}
-          {/* Data and Attribution */}
           <section className="pt-14 sm:pt-16 lg:pt-20">
             <div className="rounded-[30px] border border-[#DED0B9] bg-white px-7 py-8 shadow-[0_6px_20px_rgba(67,52,35,0.05)] sm:px-10">
               <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.3em] text-[#9B6417]">
-                    Data & Attribution
+                    Data &amp; Attribution
                   </p>
 
                   <p className="mt-3 max-w-3xl text-sm leading-7 text-stone-600 sm:text-base">
@@ -246,9 +253,9 @@ function About() {
                       {" "}
                       The Movie Database (TMDB)
                     </span>
-                    . Your watchlist is stored locally in your browser using
-                    Local Storage and is never uploaded or shared with any
-                    external service.
+                    . Watchlist data is stored locally in the current browser
+                    using Local Storage and is not synchronized, uploaded, or
+                    shared with an external service.
                   </p>
                 </div>
 

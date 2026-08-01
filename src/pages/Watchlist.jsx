@@ -11,10 +11,10 @@ function Watchlist() {
   const hasMovies = watchlistCount > 0;
 
   return (
-    <main className="min-h-[70vh] bg-[#F7F2E9] py-12 sm:py-16 lg:py-20">
+    <main className="min-h-[70vh] bg-[#F7F2E9] py-8 sm:py-10 lg:py-12">
       <Container>
         <section aria-labelledby="watchlist-heading">
-          <div className="mb-8 flex flex-col gap-6 sm:mb-10 lg:flex-row lg:items-end lg:justify-between">
+          <div className="mb-6 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[#9B6417] sm:text-sm">
                 Your Collection
@@ -22,12 +22,12 @@ function Watchlist() {
 
               <h1
                 id="watchlist-heading"
-                className="mt-3 font-['Cormorant_Garamond'] text-5xl font-bold leading-none text-[#1F2329] sm:text-6xl"
+                className="mt-2 font-['Cormorant_Garamond'] text-5xl font-bold leading-none text-[#1F2329] sm:text-6xl"
               >
                 Watchlist
               </h1>
 
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-stone-600 sm:text-base sm:leading-8 lg:text-lg">
+              <p className="mt-2 max-w-4xl text-sm leading-7 text-stone-600 sm:text-base sm:leading-8 lg:text-lg">
                 Save movies you want to revisit and keep them together in one
                 persistent collection.
               </p>

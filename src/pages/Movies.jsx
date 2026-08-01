@@ -5,17 +5,14 @@ import Container from "../components/common/Container";
 import GenreFilter from "../components/movies/GenreFilter";
 import MovieCard from "../components/movies/MovieCard";
 import Pagination from "../components/movies/Pagination";
-import {
-  getMovieGenres,
-  getMoviesByGenre,
-  getPopularMovies,
-} from "../services/tmdb";
+import SortDropdown from "../components/movies/SortDropdown";
+import { getDiscoverMovies, getMovieGenres } from "../services/tmdb";
 
 const FEATURED_GENRE_IDS = [28, 12, 16, 35, 18, 878];
 
 function MovieCardSkeleton() {
   return (
-    <div className="animate-pulse overflow-hidden rounded-xl border border-[#E7DED0] bg-white">
+    <div className="animate-pulse overflow-hidden rounded-2xl border border-[#E7DED0] bg-white shadow-[0_5px_18px_rgba(67,52,35,0.04)]">
       <div className="aspect-[2/3] bg-[#E9E1D6]" />
 
       <div className="space-y-3 px-3.5 py-3">
@@ -34,7 +31,9 @@ function MovieCardSkeleton() {
 function Movies() {
   const [movies, setMovies] = useState([]);
   const [genres, setGenres] = useState([]);
+
   const [selectedGenre, setSelectedGenre] = useState("");
+  const [sortBy, setSortBy] = useState("popularity.desc");
 
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -97,9 +96,11 @@ function Movies() {
         setLoading(true);
         setError("");
 
-        const data = selectedGenre
-          ? await getMoviesByGenre(selectedGenre, page)
-          : await getPopularMovies(page);
+        const data = await getDiscoverMovies({
+          genreId: selectedGenre,
+          page,
+          sortBy,
+        });
 
         if (isCancelled) {
           return;
@@ -127,7 +128,7 @@ function Movies() {
     return () => {
       isCancelled = true;
     };
-  }, [page, selectedGenre, retryKey]);
+  }, [page, selectedGenre, sortBy, retryKey]);
 
   function handleRetry() {
     setRetryKey((currentKey) => currentKey + 1);
@@ -135,6 +136,11 @@ function Movies() {
 
   function handleGenreChange(genreId) {
     setSelectedGenre(genreId);
+    setPage(1);
+  }
+
+  function handleSortChange(sortValue) {
+    setSortBy(sortValue);
     setPage(1);
   }
 
@@ -155,42 +161,44 @@ function Movies() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F7F2E9] py-12 sm:py-16 lg:py-20">
+    <main className="min-h-screen bg-[#F7F2E9] py-8 sm:py-10 lg:py-12">
       <Container>
         <section aria-labelledby="movies-heading">
-          <div className="mb-8 flex flex-col gap-6 sm:mb-10 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[#9B6417] sm:text-sm">
-                Browse Collection
-              </p>
+          <div className="mb-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[#9B6417] sm:text-sm">
+              Browse Collection
+            </p>
 
-              <h1
-                id="movies-heading"
-                className="mt-3 font-['Cormorant_Garamond'] text-5xl font-bold leading-none text-[#1F2329] sm:text-6xl"
-              >
-                Movies
-              </h1>
+            <h1
+              id="movies-heading"
+              className="mt-2 font-['Cormorant_Garamond'] text-5xl font-bold leading-none text-[#1F2329] sm:text-6xl"
+            >
+              Movies
+            </h1>
 
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-stone-600 sm:text-base sm:leading-8 lg:text-lg">
-                Explore popular movies from around the world and discover your
-                next favorite film.
-              </p>
-            </div>
-
-            {!loading && !error && movies.length > 0 && (
-              <span className="w-fit rounded-full border border-[#E2D3BC] bg-white px-4 py-2 text-sm font-medium text-stone-600 shadow-[0_4px_14px_rgba(67,52,35,0.05)]">
-                {movies.length} {movies.length === 1 ? "Movie" : "Movies"}
-              </span>
-            )}
+            <p className="mt-2 max-w-4xl text-sm leading-7 text-stone-600 sm:text-base sm:leading-8 lg:text-lg">
+              Explore popular movies from around the world and discover your
+              next favorite film.
+            </p>
           </div>
 
-          <div className="relative z-30 mb-8 rounded-2xl border border-[#E2D3BC] bg-white p-5 shadow-[0_6px_18px_rgba(67,52,35,0.05)]">
-            <GenreFilter
-              genres={featuredGenres}
-              selectedGenre={selectedGenre}
-              onGenreChange={handleGenreChange}
-              disabled={loading || genresLoading}
-            />
+          <div className="mb-6 grid gap-5 sm:grid-cols-2 sm:items-end">
+            <div className="w-full sm:max-w-[280px]">
+              <GenreFilter
+                genres={featuredGenres}
+                selectedGenre={selectedGenre}
+                onGenreChange={handleGenreChange}
+                disabled={loading || genresLoading}
+              />
+            </div>
+
+            <div className="w-full sm:ml-auto sm:max-w-[280px]">
+              <SortDropdown
+                value={sortBy}
+                onChange={handleSortChange}
+                disabled={loading}
+              />
+            </div>
           </div>
 
           {loading && (
@@ -218,7 +226,7 @@ function Movies() {
               <button
                 type="button"
                 onClick={handleRetry}
-                className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#B8862D] px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:bg-[#9F7225] focus:outline-none focus:ring-4 focus:ring-[#B8862D]/25"
+                className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#B8862D] px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#9F7225] focus:outline-none focus:ring-4 focus:ring-[#B8862D]/25"
               >
                 <RotateCcw size={17} aria-hidden="true" />
                 Try Again
@@ -251,7 +259,7 @@ function Movies() {
               </h2>
 
               <p className="mt-3 text-sm leading-7 text-stone-600 sm:text-base">
-                No movies are currently available for the selected genre.
+                No movies are currently available for the selected filters.
               </p>
             </div>
           )}

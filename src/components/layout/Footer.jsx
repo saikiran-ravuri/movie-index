@@ -6,6 +6,7 @@ import logo from "../../assets/logos/movie-index-logo.jpg";
 
 const footerLinks = [
   { label: "Home", to: "/" },
+  { label: "Movies", to: "/movies" },
   { label: "Watchlist", to: "/watchlist" },
   { label: "About", to: "/about" },
 ];

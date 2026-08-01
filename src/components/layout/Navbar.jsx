@@ -1,16 +1,17 @@
+import { Menu, Search, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Menu, Search, X } from "lucide-react";
 
 import Container from "../common/Container";
 import SearchBar from "../navbar/SearchBar";
 import SearchDropdown from "../navbar/SearchDropdown";
+import logo from "../../assets/logos/movie-index-logo.jpg";
 import useDebounce from "../../hooks/useDebounce";
 import { searchMovies } from "../../services/tmdb";
-import logo from "../../assets/logos/movie-index-logo.jpg";
 
 const menuLinks = [
   { name: "Home", path: "/" },
+  { name: "Movies", path: "/movies" },
   { name: "Watchlist", path: "/watchlist" },
   { name: "About", path: "/about" },
 ];
@@ -188,7 +189,11 @@ function Navbar() {
               aria-expanded={isMobileSearchOpen}
               className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#DDD0BB] bg-white/90 text-[#1F2329] transition duration-300 hover:border-[#B8862D] hover:bg-[#F3E8D4] hover:text-[#9B6417] focus:outline-none focus:ring-4 focus:ring-[#B8862D]/20 md:hidden"
             >
-              {isMobileSearchOpen ? <X size={20} /> : <Search size={20} />}
+              {isMobileSearchOpen ? (
+                <X size={20} aria-hidden="true" />
+              ) : (
+                <Search size={20} aria-hidden="true" />
+              )}
             </button>
 
             <div ref={menuRef} className="relative">
@@ -205,7 +210,11 @@ function Navbar() {
                 aria-expanded={isMenuOpen}
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#DDD0BB] bg-white/90 text-[#1F2329] transition duration-300 hover:border-[#B8862D] hover:bg-[#F3E8D4] hover:text-[#9B6417] focus:outline-none focus:ring-4 focus:ring-[#B8862D]/20"
               >
-                {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+                {isMenuOpen ? (
+                  <X size={20} aria-hidden="true" />
+                ) : (
+                  <Menu size={20} aria-hidden="true" />
+                )}
               </button>
 
               {isMenuOpen && (
@@ -235,7 +244,18 @@ function Navbar() {
                               }`
                             }
                           >
-                            {item.name}
+                            {({ isActive }) => (
+                              <span className="flex items-center justify-between">
+                                <span>{item.name}</span>
+
+                                {isActive && (
+                                  <span
+                                    aria-hidden="true"
+                                    className="h-2 w-2 rounded-full bg-[#B8862D]"
+                                  />
+                                )}
+                              </span>
+                            )}
                           </NavLink>
                         </li>
                       ))}
