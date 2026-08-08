@@ -1,6 +1,6 @@
 import { Menu, Search, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { useEffect, useRef, useState, useMemo } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 
 import Container from "../common/Container";
 import SearchBar from "../navbar/SearchBar";
@@ -24,8 +24,10 @@ function Navbar() {
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchError, setSearchError] = useState("");
+  const [activeSearchIndex, setActiveSearchIndex] = useState(-1);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
+  const navigate = useNavigate();
 
   const menuRef = useRef(null);
   const desktopSearchRef = useRef(null);
@@ -111,6 +113,19 @@ function Navbar() {
     };
   }, [debouncedSearchQuery]);
 
+  const visibleSearchResults = useMemo(() => {
+    return searchResults
+      .filter(
+        (movie) =>
+          movie &&
+          movie.id &&
+          movie.title?.trim() &&
+          movie.poster_path &&
+          movie.vote_count > 0,
+      )
+      .slice(0, 8);
+  }, [searchResults]);
+
   function closeMenu() {
     setIsMenuOpen(false);
   }
@@ -121,10 +136,36 @@ function Navbar() {
     setSearchError("");
     setIsSearching(false);
     setIsMobileSearchOpen(false);
+    setActiveSearchIndex(-1);
   }
 
   function handleSearchChange(event) {
     setSearchQuery(event.target.value);
+    setActiveSearchIndex(-1);
+  }
+
+  function handleSearchKeyDown(event) {
+    if (!searchQuery.trim() || visibleSearchResults.length === 0) {
+      return;
+    }
+
+    if (event.key === "ArrowDown") {
+      event.preventDefault();
+      setActiveSearchIndex((prev) =>
+        prev < visibleSearchResults.length - 1 ? prev + 1 : prev,
+      );
+    } else if (event.key === "ArrowUp") {
+      event.preventDefault();
+      setActiveSearchIndex((prev) => (prev > 0 ? prev - 1 : -1));
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      if (activeSearchIndex >= 0 && visibleSearchResults[activeSearchIndex]) {
+        navigate(`/movie/${visibleSearchResults[activeSearchIndex].id}`);
+        closeSearch();
+      } else if (searchQuery.trim()) {
+        // Option: allow searching or simply do nothing
+      }
+    }
   }
 
   return (
@@ -161,13 +202,18 @@ function Navbar() {
             ref={desktopSearchRef}
             className="absolute left-1/2 hidden w-[52%] -translate-x-1/2 md:block lg:w-[56%] xl:w-[52%] 2xl:max-w-[780px]"
           >
-            <SearchBar value={searchQuery} onChange={handleSearchChange} />
+            <SearchBar 
+              value={searchQuery} 
+              onChange={handleSearchChange} 
+              onKeyDown={handleSearchKeyDown} 
+            />
 
             <SearchDropdown
               isOpen={searchQuery.trim().length > 0}
               isSearching={isSearching}
               searchError={searchError}
-              searchResults={searchResults}
+              searchResults={visibleSearchResults}
+              activeIndex={activeSearchIndex}
               onClose={closeSearch}
             />
           </div>
@@ -272,13 +318,18 @@ function Navbar() {
             ref={mobileSearchRef}
             className="relative border-t border-[#E8DDCA] pb-4 pt-4 md:hidden"
           >
-            <SearchBar value={searchQuery} onChange={handleSearchChange} />
+            <SearchBar 
+              value={searchQuery} 
+              onChange={handleSearchChange}
+              onKeyDown={handleSearchKeyDown}
+            />
 
             <SearchDropdown
               isOpen={searchQuery.trim().length > 0}
               isSearching={isSearching}
               searchError={searchError}
-              searchResults={searchResults}
+              searchResults={visibleSearchResults}
+              activeIndex={activeSearchIndex}
               onClose={closeSearch}
             />
           </div>

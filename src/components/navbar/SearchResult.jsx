@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w185";
 
-function SearchResult({ movie, onSelect }) {
+function SearchResult({ movie, onSelect, isActive }) {
   const year = movie.release_date ? movie.release_date.slice(0, 4) : "—";
 
   const rating =
@@ -15,7 +15,9 @@ function SearchResult({ movie, onSelect }) {
     <Link
       to={`/movie/${movie.id}`}
       onClick={onSelect}
-      className="group flex items-center gap-4 rounded-2xl p-3 transition-all duration-300 hover:bg-[#f7efe2]"
+      className={`group flex items-center gap-4 rounded-2xl p-3 transition-all duration-300 hover:bg-[#f7efe2] ${
+        isActive ? "bg-[#f7efe2] ring-2 ring-[#b8862d]/20" : ""
+      }`}
     >
       <div className="h-[88px] w-[60px] shrink-0 overflow-hidden rounded-xl bg-[#f1ece4] shadow-sm">
         {movie.poster_path ? (

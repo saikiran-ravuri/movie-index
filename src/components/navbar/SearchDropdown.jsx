@@ -7,6 +7,7 @@ function SearchDropdown({
   isSearching,
   searchError,
   searchResults = [],
+  activeIndex = -1,
   onClose,
 }) {
   if (!isOpen) {
@@ -58,8 +59,13 @@ function SearchDropdown({
 
       {!isSearching && !searchError && visibleResults.length > 0 && (
         <div className="max-h-[500px] overflow-y-auto p-2 [scrollbar-width:thin] [scrollbar-color:#C9B48E_transparent]">
-          {visibleResults.map((movie) => (
-            <SearchResult key={movie.id} movie={movie} onSelect={onClose} />
+          {visibleResults.map((movie, index) => (
+            <SearchResult 
+              key={movie.id} 
+              movie={movie} 
+              isActive={index === activeIndex}
+              onSelect={onClose} 
+            />
           ))}
         </div>
       )}
