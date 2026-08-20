@@ -12,16 +12,16 @@ const FEATURED_GENRE_IDS = [28, 12, 16, 35, 18, 878];
 
 function MovieCardSkeleton() {
   return (
-    <div className="animate-pulse overflow-hidden rounded-2xl border border-[#E7DED0] bg-white shadow-[0_5px_18px_rgba(67,52,35,0.04)]">
-      <div className="aspect-[2/3] bg-[#E9E1D6]" />
+    <div className="animate-pulse overflow-hidden rounded-xl border border-[#e6dcc8] bg-white">
+      <div className="aspect-[2/3] bg-[#f1ece4]" />
 
-      <div className="space-y-3 px-3.5 py-3">
-        <div className="h-4 w-4/5 rounded bg-[#E9E1D6]" />
-        <div className="h-4 w-3/5 rounded bg-[#E9E1D6]" />
+      <div className="space-y-2 p-3">
+        <div className="h-4 w-4/5 rounded bg-[#f1ece4]" />
+        <div className="h-3 w-3/5 rounded bg-[#f1ece4]" />
 
-        <div className="flex items-center justify-between border-t border-[#F0EAE1] pt-3">
-          <div className="h-3 w-10 rounded bg-[#E9E1D6]" />
-          <div className="h-3 w-8 rounded bg-[#E9E1D6]" />
+        <div className="flex items-center justify-between border-t border-[#f0eae1] pt-2">
+          <div className="h-3 w-10 rounded bg-[#f1ece4]" />
+          <div className="h-3 w-8 rounded bg-[#f1ece4]" />
         </div>
       </div>
     </div>
@@ -50,46 +50,33 @@ function Movies() {
   }, [genres]);
 
   useEffect(() => {
-    let isCancelled = false;
+    let active = true;
 
     async function fetchGenres() {
       try {
         setGenresLoading(true);
-
         const genreList = await getMovieGenres();
-
-        if (!isCancelled) {
-          setGenres(genreList);
-        }
-      } catch (error) {
-        console.error("Failed to fetch movie genres:", error);
-
-        if (!isCancelled) {
-          setGenres([]);
-        }
+        if (active) setGenres(genreList);
+      } catch (err) {
+        console.error("Failed to fetch movie genres:", err);
+        if (active) setGenres([]);
       } finally {
-        if (!isCancelled) {
-          setGenresLoading(false);
-        }
+        if (active) setGenresLoading(false);
       }
     }
 
     fetchGenres();
-
     return () => {
-      isCancelled = true;
+      active = false;
     };
   }, []);
 
   useEffect(() => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [page]);
 
   useEffect(() => {
-    let isCancelled = false;
+    let active = true;
 
     async function fetchMovies() {
       try {
@@ -102,36 +89,30 @@ function Movies() {
           sortBy,
         });
 
-        if (isCancelled) {
-          return;
-        }
+        if (!active) return;
 
         setMovies(data.movies);
         setTotalPages(data.totalPages);
-      } catch (error) {
-        console.error("Failed to fetch movies:", error);
-
-        if (!isCancelled) {
+      } catch (err) {
+        console.error("Failed to fetch movies:", err);
+        if (active) {
           setMovies([]);
           setTotalPages(1);
-          setError("We couldn’t load the movie collection right now.");
+          setError("We couldn't load the movie collection right now.");
         }
       } finally {
-        if (!isCancelled) {
-          setLoading(false);
-        }
+        if (active) setLoading(false);
       }
     }
 
     fetchMovies();
-
     return () => {
-      isCancelled = true;
+      active = false;
     };
   }, [page, selectedGenre, sortBy, retryKey]);
 
   function handleRetry() {
-    setRetryKey((currentKey) => currentKey + 1);
+    setRetryKey((k) => k + 1);
   }
 
   function handleGenreChange(genreId) {
@@ -145,44 +126,20 @@ function Movies() {
   }
 
   function handlePreviousPage() {
-    if (page <= 1 || loading) {
-      return;
-    }
-
-    setPage((currentPage) => currentPage - 1);
+    if (page <= 1 || loading) return;
+    setPage((p) => p - 1);
   }
 
   function handleNextPage() {
-    if (page >= totalPages || loading) {
-      return;
-    }
-
-    setPage((currentPage) => currentPage + 1);
+    if (page >= totalPages || loading) return;
+    setPage((p) => p + 1);
   }
 
   return (
-    <main className="min-h-screen bg-[#F7F2E9] py-8 sm:py-10 lg:py-12">
+    <main className="min-h-screen bg-[#f8f4ec] py-8 sm:py-10 lg:py-12">
       <Container>
-        <section aria-labelledby="movies-heading">
-          <div className="mb-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[#9B6417] sm:text-sm">
-              Browse Collection
-            </p>
-
-            <h1
-              id="movies-heading"
-              className="mt-2 font-['Cormorant_Garamond'] text-5xl font-bold leading-none text-[#1F2329] sm:text-6xl"
-            >
-              Movies
-            </h1>
-
-            <p className="mt-2 max-w-4xl text-sm leading-7 text-stone-600 sm:text-base sm:leading-8 lg:text-lg">
-              Explore popular movies from around the world and discover your
-              next favorite film.
-            </p>
-          </div>
-
-          <div className="mb-6 grid gap-5 sm:grid-cols-2 sm:items-end">
+        <section aria-label="Movies collection">
+          <div className="mb-6 grid gap-4 sm:grid-cols-2 sm:items-end">
             <div className="w-full sm:max-w-[280px]">
               <GenreFilter
                 genres={featuredGenres}
@@ -210,25 +167,25 @@ function Movies() {
           )}
 
           {!loading && error && (
-            <div className="flex min-h-[360px] flex-col items-center justify-center rounded-3xl border border-[#E2D3BC] bg-white px-6 py-14 text-center shadow-[0_8px_24px_rgba(67,52,35,0.06)]">
-              <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#E8DBC7] bg-[#F7F0E4] text-[#B8862D]">
-                <TriangleAlert size={24} aria-hidden="true" />
+            <div className="flex min-h-[300px] flex-col items-center justify-center rounded-2xl border border-[#e6dcc8] bg-white p-8 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#e6dcc8] bg-[#f8f4ec] text-[#b8862d]">
+                <TriangleAlert size={22} aria-hidden="true" />
               </div>
 
-              <h2 className="mt-5 font-['Cormorant_Garamond'] text-3xl font-bold text-[#1F2329] sm:text-4xl">
+              <h2 className="mt-4 font-['Cormorant_Garamond'] text-2xl font-bold text-[#1f2329]">
                 Movies are temporarily unavailable
               </h2>
 
-              <p className="mt-3 max-w-md text-sm leading-7 text-stone-600 sm:text-base">
+              <p className="mt-2 text-sm text-stone-600">
                 {error} Check your connection and try again.
               </p>
 
               <button
                 type="button"
                 onClick={handleRetry}
-                className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#B8862D] px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:bg-[#9F7225] focus:outline-none focus:ring-4 focus:ring-[#B8862D]/25"
+                className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#b8862d] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#9b6417]"
               >
-                <RotateCcw size={17} aria-hidden="true" />
+                <RotateCcw size={16} aria-hidden="true" />
                 Try Again
               </button>
             </div>
@@ -253,12 +210,12 @@ function Movies() {
           )}
 
           {!loading && !error && movies.length === 0 && (
-            <div className="rounded-3xl border border-[#E2D3BC] bg-white px-6 py-16 text-center shadow-[0_8px_24px_rgba(67,52,35,0.06)]">
-              <h2 className="font-['Cormorant_Garamond'] text-3xl font-bold text-[#1F2329]">
+            <div className="rounded-2xl border border-[#e6dcc8] bg-white p-12 text-center">
+              <h2 className="font-['Cormorant_Garamond'] text-2xl font-bold text-[#1f2329]">
                 No movies available
               </h2>
 
-              <p className="mt-3 text-sm leading-7 text-stone-600 sm:text-base">
+              <p className="mt-2 text-sm text-stone-600">
                 No movies are currently available for the selected filters.
               </p>
             </div>

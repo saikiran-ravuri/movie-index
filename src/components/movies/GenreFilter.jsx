@@ -43,10 +43,7 @@ function GenreFilter({
 
   return (
     <div ref={dropdownRef} className="relative w-full sm:w-[250px]">
-      <p
-        id="genre-filter-label"
-        className="mb-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-[#9B6417]"
-      >
+      <p id="genre-filter-label" className="mb-1.5 text-xs font-semibold text-stone-700">
         Genre
       </p>
 
@@ -61,26 +58,26 @@ function GenreFilter({
         aria-labelledby="genre-filter-label"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        className={`flex w-full items-center justify-between rounded-xl border bg-[#FFFDF8] px-4 py-3 text-left text-[15px] font-medium text-[#1F2329] shadow-sm transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-[#B8862D]/20 disabled:cursor-not-allowed disabled:opacity-60 ${
+        className={`flex w-full items-center justify-between rounded-xl border bg-white px-4 py-2.5 text-left text-sm font-medium text-[#1f2329] transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
           isOpen
-            ? "border-[#B8862D] ring-4 ring-[#B8862D]/10"
-            : "border-[#DCCDB5] hover:border-[#B8862D] hover:shadow-md"
+            ? "border-[#b8862d]"
+            : "border-[#e6dcc8] hover:border-[#b8862d]"
         }`}
       >
         <span>{selectedGenreName}</span>
 
         <ChevronDown
-          size={18}
+          size={16}
           aria-hidden="true"
-          className={`text-[#9B6417] transition-transform duration-300 ${
-            isOpen ? "rotate-180" : ""
+          className={`text-stone-500 transition-transform duration-200 ${
+            isOpen ? "rotate-180 text-[#b8862d]" : ""
           }`}
         />
       </button>
 
       {isOpen && (
         <div
-          className="absolute left-0 top-[calc(100%+10px)] z-40 w-full overflow-hidden rounded-2xl border border-[#E4D6BF] bg-[#FFFDF8] p-2 shadow-[0_16px_32px_rgba(67,52,35,0.12)]"
+          className="absolute left-0 top-[calc(100%+6px)] z-40 w-full overflow-hidden rounded-xl border border-[#e6dcc8] bg-white p-1.5 shadow-md"
           role="listbox"
           aria-labelledby="genre-filter-label"
         >
@@ -89,15 +86,14 @@ function GenreFilter({
             role="option"
             aria-selected={selectedGenre === ""}
             onClick={() => handleSelection("")}
-            className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm transition-colors duration-200 ${
+            className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
               selectedGenre === ""
-                ? "bg-[#F2E7D5] font-semibold text-[#9B6417]"
-                : "text-stone-700 hover:bg-[#F8F2E8] hover:text-[#9B6417]"
+                ? "bg-[#f8f4ec] font-semibold text-[#b8862d]"
+                : "text-stone-700 hover:bg-[#f8f4ec] hover:text-[#b8862d]"
             }`}
           >
             <span>All Genres</span>
-
-            {selectedGenre === "" && <Check size={16} aria-hidden="true" />}
+            {selectedGenre === "" && <Check size={15} aria-hidden="true" />}
           </button>
 
           {genres.map((genre) => {
@@ -110,15 +106,14 @@ function GenreFilter({
                 role="option"
                 aria-selected={isSelected}
                 onClick={() => handleSelection(String(genre.id))}
-                className={`mt-1 flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-sm transition-colors duration-200 ${
+                className={`mt-0.5 flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                   isSelected
-                    ? "bg-[#F2E7D5] font-semibold text-[#9B6417]"
-                    : "text-stone-700 hover:bg-[#F8F2E8] hover:text-[#9B6417]"
+                    ? "bg-[#f8f4ec] font-semibold text-[#b8862d]"
+                    : "text-stone-700 hover:bg-[#f8f4ec] hover:text-[#b8862d]"
                 }`}
               >
                 <span>{genre.name}</span>
-
-                {isSelected && <Check size={16} aria-hidden="true" />}
+                {isSelected && <Check size={15} aria-hidden="true" />}
               </button>
             );
           })}
@@ -129,3 +124,4 @@ function GenreFilter({
 }
 
 export default GenreFilter;
+

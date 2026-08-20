@@ -17,7 +17,7 @@ function SearchBar({ value, onChange, onKeyDown }) {
           onChange={onChange}
           onKeyDown={onKeyDown}
           placeholder="Search movies..."
-          className="w-full rounded-full border border-[#d8ccb7] bg-white py-3 pl-12 pr-5 text-[15px] text-[#1f2329] outline-none transition duration-300 placeholder:text-[#958b7c] hover:border-[#cbb996] focus:border-[#b8862d] focus:ring-4 focus:ring-[#b8862d]/10"
+          className="w-full rounded-full border border-[#d8ccb7] bg-white py-2.5 pl-11 pr-4 text-sm text-[#1f2329] outline-none transition-colors placeholder:text-[#958b7c] hover:border-[#b8862d] focus:border-[#b8862d]"
         />
       </label>
     </div>

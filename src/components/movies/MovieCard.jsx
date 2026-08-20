@@ -1,14 +1,12 @@
-import { Bookmark } from "lucide-react";
+import { Bookmark, Star } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { useWatchlist } from "../../hooks/useWatchlist";
 import { getPosterUrl } from "../../utils/image";
 
 function MovieCard({ movie }) {
-  const navigate = useNavigate();
   const { isInWatchlist, toggleWatchlist } = useWatchlist();
-
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [hasImageError, setHasImageError] = useState(false);
 
@@ -17,121 +15,67 @@ function MovieCard({ movie }) {
   const posterUrl = getPosterUrl(movie.poster_path);
   const isSaved = isInWatchlist(movie.id);
 
-  function handleMovieClick() {
-    navigate(`/movie/${movie.id}`);
-  }
-
   function handleWatchlistClick(event) {
+    event.preventDefault();
     event.stopPropagation();
     toggleWatchlist(movie);
-  }
-
-  function handleKeyDown(event) {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      handleMovieClick();
-    }
   }
 
   const shouldShowImage = posterUrl && !hasImageError;
 
   return (
-    <article
-      role="link"
-      tabIndex={0}
-      onClick={handleMovieClick}
-      onKeyDown={handleKeyDown}
-      aria-label={`View details for ${movie.title}`}
-      className="group relative cursor-pointer overflow-hidden rounded-xl border border-[#E7DED0] bg-white shadow-[0_2px_8px_rgba(67,52,35,0.05)] transition-all duration-300 ease-out hover:-translate-y-1 hover:border-[#C58B2A]/35 hover:shadow-[0_10px_24px_rgba(67,52,35,0.12)] focus:outline-none focus:ring-4 focus:ring-[#B8862D]/20"
+    <Link
+      to={`/movie/${movie.id}`}
+      className="relative block overflow-hidden rounded-xl border border-[#e6dcc8] bg-white transition-colors hover:border-[#b8862d]"
     >
-      <div className="relative aspect-[2/3] overflow-hidden bg-[#F1ECE4]">
-        {shouldShowImage && !isImageLoaded && (
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 animate-pulse bg-[#E8E0D4]"
-          />
-        )}
-
+      <div className="relative aspect-[2/3] overflow-hidden bg-[#f1ece4]">
         {shouldShowImage ? (
           <img
             src={posterUrl}
             alt=""
             loading="lazy"
-            decoding="async"
             onLoad={() => setIsImageLoaded(true)}
-            onError={() => {
-              setHasImageError(true);
-              setIsImageLoaded(false);
-            }}
-            className={`h-full w-full object-cover transition-all duration-500 ease-out group-hover:scale-[1.025] ${
+            onError={() => setHasImageError(true)}
+            className={`h-full w-full object-cover transition-opacity duration-300 ${
               isImageLoaded ? "opacity-100" : "opacity-0"
             }`}
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-[linear-gradient(145deg,#F2EADF_0%,#E7DCCB_100%)] px-5 text-center">
-            <div>
-              <p className="font-['Cormorant_Garamond'] text-2xl font-bold text-[#8D672A]">
-                Movie Index
-              </p>
-
-              <div className="mx-auto mt-3 h-px w-12 bg-[#B8862D]/35" />
-
-              <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.24em] text-stone-500">
-                Poster unavailable
-              </p>
-            </div>
+          <div className="flex h-full items-center justify-center bg-[#f8f4ec] text-xs text-stone-500">
+            No Poster
           </div>
         )}
 
         <button
           type="button"
           onClick={handleWatchlistClick}
-          aria-label={
+          aria-label={isSaved ? "Remove from watchlist" : "Add to watchlist"}
+          className={`absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full border transition-colors ${
             isSaved
-              ? `Remove ${movie.title} from watchlist`
-              : `Add ${movie.title} to watchlist`
-          }
-          aria-pressed={isSaved}
-          className={`absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border shadow-[0_6px_16px_rgba(0,0,0,0.20)] backdrop-blur-md transition duration-300 focus:outline-none focus:ring-4 focus:ring-[#D5A64E]/30 ${
-            isSaved
-              ? "border-[#D5A64E] bg-[#C58B2A] text-white"
-              : "border-white/25 bg-[#1F2329]/70 text-white hover:border-[#D5A64E] hover:bg-[#C58B2A]"
+              ? "border-[#b8862d] bg-[#b8862d] text-white"
+              : "border-[#e6dcc8] bg-white/90 text-stone-700 hover:border-[#b8862d] hover:bg-[#b8862d] hover:text-white"
           }`}
         >
-          <Bookmark
-            size={18}
-            fill={isSaved ? "currentColor" : "none"}
-            aria-hidden="true"
-          />
+          <Bookmark size={14} fill={isSaved ? "currentColor" : "none"} />
         </button>
       </div>
 
-      <div className="px-3.5 py-3">
-        <h3 className="line-clamp-2 min-h-10 text-[14px] font-semibold leading-5 text-stone-900 transition-colors duration-300 group-hover:text-[#9B6417]">
+      <div className="p-3">
+        <h3 className="truncate text-sm font-semibold text-[#1f2329]">
           {movie.title}
         </h3>
 
-        <div className="mt-3 flex items-center justify-between border-t border-[#F0EAE1] pt-2.5">
-          <div className="flex items-center gap-1.5">
-            <span
-              aria-hidden="true"
-              className="text-[14px] leading-none text-[#C4871F]"
-            >
-              ★
-            </span>
-
-            <span className="text-[13px] font-semibold text-stone-800">
-              {rating}
-            </span>
-          </div>
-
-          <span className="text-[13px] font-medium text-stone-500">
-            {releaseYear}
+        <div className="mt-2 flex items-center justify-between border-t border-[#f0eae1] pt-2 text-xs text-stone-500">
+          <span className="flex items-center gap-1 font-semibold text-[#b8862d]">
+            <Star size={12} fill="currentColor" />
+            {rating}
           </span>
+          <span>{releaseYear}</span>
         </div>
       </div>
-    </article>
+    </Link>
   );
 }
 
 export default MovieCard;
+

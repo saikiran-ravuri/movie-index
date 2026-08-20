@@ -13,13 +13,12 @@ function Home() {
   const [popularMovies, setPopularMovies] = useState([]);
   const [trendingMovies, setTrendingMovies] = useState([]);
   const [topRatedMovies, setTopRatedMovies] = useState([]);
-  const [featuredMovie, setFeaturedMovie] = useState(null);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    let isCancelled = false;
+    let active = true;
 
     async function fetchHomeMovies() {
       try {
@@ -32,51 +31,34 @@ function Home() {
           getTopRatedMovies(),
         ]);
 
-        if (isCancelled) {
-          return;
-        }
+        if (!active) return;
 
-        const popular = popularResponse.movies;
-
-        setPopularMovies(popular);
-        setTrendingMovies(trending);
-        setTopRatedMovies(topRated);
-
-        if (popular.length > 0) {
-          const randomIndex = Math.floor(Math.random() * popular.length);
-          setFeaturedMovie(popular[randomIndex]);
-        } else {
-          setFeaturedMovie(null);
-        }
-      } catch (error) {
-        console.error("Failed to fetch home movies:", error);
-
-        if (!isCancelled) {
-          setPopularMovies([]);
-          setTrendingMovies([]);
-          setTopRatedMovies([]);
-          setFeaturedMovie(null);
-          setError("Unable to load movies. Please try again.");
-        }
+        setPopularMovies(popularResponse.movies || []);
+        setTrendingMovies(trending || []);
+        setTopRatedMovies(topRated || []);
+      } catch (err) {
+        if (!active) return;
+        console.error("Failed to fetch home movies:", err);
+        setPopularMovies([]);
+        setTrendingMovies([]);
+        setTopRatedMovies([]);
+        setError("Unable to load movies. Please try again.");
       } finally {
-        if (!isCancelled) {
-          setLoading(false);
-        }
+        if (active) setLoading(false);
       }
     }
 
     fetchHomeMovies();
-
     return () => {
-      isCancelled = true;
+      active = false;
     };
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#F7F2E9]">
+    <main className="min-h-screen bg-[#f8f4ec]">
       <Hero />
 
-      {featuredMovie && <MovieBanner movie={featuredMovie} />}
+      {popularMovies.length > 0 && <MovieBanner movies={popularMovies} />}
 
       {loading && (
         <p className="py-16 text-center text-sm font-medium text-stone-500">
@@ -117,3 +99,4 @@ function Home() {
 }
 
 export default Home;
+
