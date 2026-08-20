@@ -1,10 +1,10 @@
 import {
-  Banknote,
-  CalendarDays,
-  CircleDollarSign,
-  Clock3,
-  Languages,
-  Clapperboard,
+  Calendar,
+  Clock,
+  DollarSign,
+  TrendingUp,
+  Globe,
+  Activity,
 } from "lucide-react";
 
 import Container from "../common/Container";
@@ -50,53 +50,45 @@ function MovieInfo({ movie }) {
     {
       label: "Release Date",
       value: formattedReleaseDate,
-      icon: CalendarDays,
+      icon: Calendar,
     },
     {
       label: "Runtime",
       value: formattedRuntime,
-      icon: Clock3,
+      icon: Clock,
     },
     {
       label: "Budget",
       value: formatCurrency(movie.budget),
-      icon: CircleDollarSign,
+      icon: DollarSign,
     },
     {
       label: "Revenue",
       value: formatCurrency(movie.revenue),
-      icon: Banknote,
+      icon: TrendingUp,
     },
     {
       label: "Original Language",
       value: originalLanguage,
-      icon: Languages,
+      icon: Globe,
     },
     {
       label: "Status",
       value: movie.status || "Unavailable",
-      icon: Clapperboard,
+      icon: Activity,
     },
   ];
 
   return (
     <section aria-labelledby="movie-information-heading">
       <Container>
-        <div className="mb-7 sm:mb-9">
-          <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[#9B6417] sm:text-sm">
-            At a Glance
-          </p>
-
+        <div className="mb-6">
           <h2
             id="movie-information-heading"
-            className="mt-3 font-['Cormorant_Garamond'] text-4xl font-bold leading-tight text-[#1F2329] sm:text-5xl"
+            className="font-['Cormorant_Garamond'] text-3xl font-bold text-[#1f2329] sm:text-4xl"
           >
             Movie Information
           </h2>
-
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-600 sm:text-base">
-            Key release, production, language, and financial information.
-          </p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">

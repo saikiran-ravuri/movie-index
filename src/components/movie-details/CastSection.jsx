@@ -14,58 +14,33 @@ function CastCard({ person }) {
   const shouldShowImage = profileUrl && !hasImageError;
 
   return (
-    <article className="group w-[165px] shrink-0 snap-start overflow-hidden rounded-2xl border border-[#E2D3BC] bg-white shadow-[0_5px_18px_rgba(67,52,35,0.06)] transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-[#C58B2A]/40 hover:shadow-[0_12px_26px_rgba(67,52,35,0.1)] sm:w-[185px] lg:w-[195px]">
-      <div className="relative aspect-[2/3] overflow-hidden bg-[#EEE5D8]">
-        {shouldShowImage && !isImageLoaded && (
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 animate-pulse bg-[#E7DED0]"
-          />
-        )}
-
+    <article className="w-[160px] shrink-0 snap-start overflow-hidden rounded-xl border border-[#e6dcc8] bg-white sm:w-[180px]">
+      <div className="relative aspect-[2/3] overflow-hidden bg-[#f1ece4]">
         {shouldShowImage ? (
           <img
             src={profileUrl}
-            alt={`${person.name} as ${person.character || "a cast member"}`}
+            alt={`${person.name}`}
             loading="lazy"
-            decoding="async"
-            width="300"
-            height="450"
             onLoad={() => setIsImageLoaded(true)}
-            onError={() => {
-              setHasImageError(true);
-              setIsImageLoaded(false);
-            }}
-            className={`h-full w-full object-cover transition-[opacity,transform] duration-500 group-hover:scale-[1.03] ${
+            onError={() => setHasImageError(true)}
+            className={`h-full w-full object-cover transition-opacity duration-300 ${
               isImageLoaded ? "opacity-100" : "opacity-0"
             }`}
           />
         ) : (
-          <div className="flex h-full flex-col items-center justify-center bg-[linear-gradient(145deg,#F2EADF_0%,#E7DCCB_100%)] px-5 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-[#DCCDB5] bg-[#F8F3EA] text-[#B8862D]">
-              <UserRound size={25} aria-hidden="true" />
-            </div>
-
-            <p className="mt-4 text-[10px] font-semibold uppercase tracking-[0.22em] text-stone-500">
-              Image unavailable
-            </p>
+          <div className="flex h-full flex-col items-center justify-center bg-[#f8f4ec] text-stone-500">
+            <UserRound size={22} />
           </div>
         )}
       </div>
 
-      <div className="p-4">
-        <h3
-          className="truncate text-base font-semibold text-[#1F2329]"
-          title={person.name}
-        >
+      <div className="p-3">
+        <h3 className="truncate text-sm font-semibold text-[#1f2329]" title={person.name}>
           {person.name}
         </h3>
 
-        <p
-          className="mt-1 line-clamp-2 min-h-10 text-sm leading-5 text-stone-500"
-          title={person.character || "Character unavailable"}
-        >
-          {person.character || "Character unavailable"}
+        <p className="mt-0.5 truncate text-xs text-stone-500" title={person.character}>
+          {person.character || "Role unavailable"}
         </p>
       </div>
     </article>
@@ -82,25 +57,16 @@ function CastSection({ cast = [] }) {
   return (
     <section aria-labelledby="top-cast-heading">
       <Container>
-        <div className="mb-7 sm:mb-9">
-          <p className="text-xs font-semibold uppercase tracking-[0.34em] text-[#9B6417] sm:text-sm">
-            Meet the Cast
-          </p>
-
+        <div className="mb-6">
           <h2
             id="top-cast-heading"
-            className="mt-3 font-['Cormorant_Garamond'] text-4xl font-bold leading-tight text-[#1F2329] sm:text-5xl"
+            className="font-['Cormorant_Garamond'] text-3xl font-bold text-[#1f2329] sm:text-4xl"
           >
             Top Cast
           </h2>
-
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-600 sm:text-base">
-            The leading performers and the characters they portray in this
-            movie.
-          </p>
         </div>
 
-        <div className="-mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth px-1 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:gap-5">
+        <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {castMembers.map((person) => (
             <CastCard
               key={`${person.id}-${person.cast_id ?? person.credit_id}`}
@@ -114,3 +80,4 @@ function CastSection({ cast = [] }) {
 }
 
 export default CastSection;
+

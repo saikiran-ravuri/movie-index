@@ -11,32 +11,28 @@ import { getMovieCredits, getMovieDetails } from "../services/tmdb";
 
 function MovieDetailsSkeleton() {
   return (
-    <main className="min-h-screen bg-[#F7F2E9] py-6 sm:py-8 lg:py-10">
+    <main className="min-h-screen bg-[#f8f4ec] py-6 sm:py-8 lg:py-10">
       <Container>
-        <div className="animate-pulse overflow-hidden rounded-3xl border border-[#D9C9AE] bg-[#1F2329] p-6 sm:p-9 lg:p-14">
-          <div className="grid gap-10 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-end lg:gap-14">
-            <div className="mx-auto aspect-[2/3] w-full max-w-[260px] rounded-3xl bg-white/10 lg:mx-0 lg:max-w-none" />
+        <div className="animate-pulse overflow-hidden rounded-2xl border border-[#e6dcc8] bg-[#1f2329] p-6 sm:p-8 lg:p-12">
+          <div className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)] lg:items-end lg:gap-12">
+            <div className="mx-auto aspect-[2/3] w-full max-w-[240px] rounded-2xl bg-white/10 lg:mx-0 lg:max-w-none" />
 
             <div>
-              <div className="h-3 w-32 rounded bg-white/15" />
+              <div className="h-10 w-4/5 rounded bg-white/15 sm:h-12" />
 
-              <div className="mt-5 h-14 w-4/5 rounded bg-white/15 sm:h-16" />
-
-              <div className="mt-4 h-6 w-2/3 rounded bg-white/10" />
-
-              <div className="mt-6 flex flex-wrap gap-3">
-                <div className="h-9 w-24 rounded-full bg-white/10" />
-                <div className="h-9 w-20 rounded-full bg-white/10" />
-                <div className="h-9 w-24 rounded-full bg-white/10" />
+              <div className="mt-4 flex flex-wrap gap-2">
+                <div className="h-8 w-20 rounded-full bg-white/10" />
+                <div className="h-8 w-16 rounded-full bg-white/10" />
+                <div className="h-8 w-20 rounded-full bg-white/10" />
               </div>
 
-              <div className="mt-8 space-y-3">
-                <div className="h-5 w-full rounded bg-white/10" />
-                <div className="h-5 w-11/12 rounded bg-white/10" />
-                <div className="h-5 w-3/4 rounded bg-white/10" />
+              <div className="mt-6 space-y-2">
+                <div className="h-4 w-full rounded bg-white/10" />
+                <div className="h-4 w-11/12 rounded bg-white/10" />
+                <div className="h-4 w-3/4 rounded bg-white/10" />
               </div>
 
-              <div className="mt-8 h-11 w-48 rounded-full bg-white/15" />
+              <div className="mt-6 h-10 w-44 rounded-full bg-white/15" />
             </div>
           </div>
         </div>
@@ -55,7 +51,7 @@ function MovieDetails() {
   const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
-    let isCancelled = false;
+    let active = true;
 
     async function loadMovieData() {
       try {
@@ -67,36 +63,31 @@ function MovieDetails() {
           getMovieCredits(id),
         ]);
 
-        if (isCancelled) {
-          return;
-        }
+        if (!active) return;
 
         setMovie(movieData);
         setCast(castData.slice(0, 12));
-      } catch (error) {
-        console.error("Failed to load movie details:", error);
-
-        if (!isCancelled) {
+      } catch (err) {
+        console.error("Failed to load movie details:", err);
+        if (active) {
           setMovie(null);
           setCast([]);
-          setError("We couldn’t load this movie right now.");
+          setError("We couldn't load this movie right now.");
         }
       } finally {
-        if (!isCancelled) {
-          setLoading(false);
-        }
+        if (active) setLoading(false);
       }
     }
 
     loadMovieData();
 
     return () => {
-      isCancelled = true;
+      active = false;
     };
   }, [id, retryKey]);
 
   function handleRetry() {
-    setRetryKey((current) => current + 1);
+    setRetryKey((c) => c + 1);
   }
 
   if (loading) {
@@ -105,28 +96,27 @@ function MovieDetails() {
 
   if (error || !movie) {
     return (
-      <main className="min-h-[75vh] bg-[#F7F2E9] py-12 sm:py-16">
+      <main className="min-h-[75vh] bg-[#f8f4ec] py-12 sm:py-16">
         <Container>
-          <div className="flex min-h-[420px] flex-col items-center justify-center rounded-3xl border border-[#E2D3BC] bg-white px-6 py-14 text-center shadow-[0_8px_24px_rgba(67,52,35,0.06)]">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#E8DBC7] bg-[#F7F0E4] text-[#B8862D]">
-              <TriangleAlert size={24} />
+          <div className="flex min-h-[360px] flex-col items-center justify-center rounded-2xl border border-[#e6dcc8] bg-white p-8 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-[#e6dcc8] bg-[#f8f4ec] text-[#b8862d]">
+              <TriangleAlert size={22} />
             </div>
 
-            <h1 className="mt-5 font-['Cormorant_Garamond'] text-3xl font-bold text-[#1F2329] sm:text-4xl">
+            <h1 className="mt-4 font-['Cormorant_Garamond'] text-2xl font-bold text-[#1f2329] sm:text-3xl">
               Movie details are unavailable
             </h1>
 
-            <p className="mt-3 max-w-md text-sm leading-7 text-stone-600 sm:text-base">
-              {error || "The requested movie could not be found."} Check your
-              connection and try again.
+            <p className="mt-2 text-sm text-stone-600">
+              {error || "The requested movie could not be found."} Check your connection and try again.
             </p>
 
             <button
               type="button"
               onClick={handleRetry}
-              className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#B8862D] px-6 py-3 text-sm font-semibold text-white transition duration-300 hover:bg-[#9F7225] focus:outline-none focus:ring-4 focus:ring-[#B8862D]/25"
+              className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#b8862d] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#9b6417]"
             >
-              <RotateCcw size={17} />
+              <RotateCcw size={16} />
               Try Again
             </button>
           </div>
@@ -136,10 +126,10 @@ function MovieDetails() {
   }
 
   return (
-    <main className="min-h-screen bg-[#F7F2E9]">
+    <main className="min-h-screen bg-[#f8f4ec]">
       <MovieHero movie={movie} />
 
-      <div className="space-y-14 pb-16 sm:space-y-16 sm:pb-20 lg:space-y-20 lg:pb-24">
+      <div className="space-y-12 pb-16 lg:space-y-16 lg:pb-20">
         <MovieInfo movie={movie} />
 
         {movie.production_companies?.length > 0 && (
@@ -153,3 +143,4 @@ function MovieDetails() {
 }
 
 export default MovieDetails;
+

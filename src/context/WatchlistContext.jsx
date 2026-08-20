@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 
 const STORAGE_KEY = "movie-index-watchlist";
 
@@ -8,16 +8,12 @@ export const WatchlistContext = createContext(null);
 function readStoredWatchlist() {
   try {
     const storedValue = localStorage.getItem(STORAGE_KEY);
-
-    if (!storedValue) {
-      return [];
-    }
+    if (!storedValue) return [];
 
     const parsedValue = JSON.parse(storedValue);
-
     return Array.isArray(parsedValue) ? parsedValue : [];
   } catch (error) {
-    console.error("Failed to read watchlist from local storage:", error);
+    console.error("failed to read watchlist from local storage:", error);
     return [];
   }
 }
@@ -29,63 +25,56 @@ export function WatchlistProvider({ children }) {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(watchlist));
     } catch (error) {
-      console.error("Failed to save watchlist to local storage:", error);
+      console.error("failed to save watchlist to local storage:", error);
     }
   }, [watchlist]);
 
-  function addToWatchlist(movie) {
-    if (!movie?.id) {
-      return;
-    }
+  const addToWatchlist = useCallback((movie) => {
+    if (!movie?.id) return;
 
-    setWatchlist((currentWatchlist) => {
-      const alreadyExists = currentWatchlist.some(
-        (savedMovie) => savedMovie.id === movie.id,
-      );
-
-      if (alreadyExists) {
-        return currentWatchlist;
-      }
-
-      return [...currentWatchlist, movie];
+    setWatchlist((current) => {
+      const exists = current.some((item) => item.id === movie.id);
+      return exists ? current : [...current, movie];
     });
-  }
+  }, []);
 
-  function removeFromWatchlist(movieId) {
-    setWatchlist((currentWatchlist) =>
-      currentWatchlist.filter((movie) => movie.id !== movieId),
-    );
-  }
+  const removeFromWatchlist = useCallback((movieId) => {
+    setWatchlist((current) => current.filter((item) => item.id !== movieId));
+  }, []);
 
-  function isInWatchlist(movieId) {
-    return watchlist.some((movie) => movie.id === movieId);
-  }
+  const isInWatchlist = useCallback(
+    (movieId) => watchlist.some((item) => item.id === movieId),
+    [watchlist],
+  );
 
-  function toggleWatchlist(movie) {
-    if (!movie?.id) {
-      return;
-    }
+  const toggleWatchlist = useCallback(
+    (movie) => {
+      if (!movie?.id) return;
+      if (isInWatchlist(movie.id)) {
+        removeFromWatchlist(movie.id);
+      } else {
+        addToWatchlist(movie);
+      }
+    },
+    [isInWatchlist, removeFromWatchlist, addToWatchlist],
+  );
 
-    if (isInWatchlist(movie.id)) {
-      removeFromWatchlist(movie.id);
-      return;
-    }
-
-    addToWatchlist(movie);
-  }
-
-  const contextValue = {
-    watchlist,
-    watchlistCount: watchlist.length,
-    addToWatchlist,
-    removeFromWatchlist,
-    toggleWatchlist,
-    isInWatchlist,
-  };
+  const value = useMemo(
+    () => ({
+      watchlist,
+      watchlistCount: watchlist.length,
+      addToWatchlist,
+      removeFromWatchlist,
+      toggleWatchlist,
+      isInWatchlist,
+    }),
+    [watchlist, addToWatchlist, removeFromWatchlist, toggleWatchlist, isInWatchlist],
+  );
 
   return (
-    <WatchlistContext.Provider value={contextValue}>
+    <WatchlistContext.Provider value={value}>
       {children}
     </WatchlistContext.Provider>
   );
 }
+

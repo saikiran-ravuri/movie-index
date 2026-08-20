@@ -22,3 +22,4 @@ function InfoCard({ label, value, icon }) {
 
 export default InfoCard;
 
+
